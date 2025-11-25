@@ -1,0 +1,58 @@
+import 'package:dart_amqp/dart_amqp.dart';
+import 'package:stacked/stacked.dart';
+import '../../app/app.locator.dart';
+import '../../services/message_broker_service.dart';
+
+class SagaPageViewModel extends BaseViewModel {
+  final _brokerService = locator<MessageBrokerService>();
+
+  List<String> _logs = [];
+  List<String> get logs => _logs;
+
+  // Status Indicators
+  bool _isBrokerConnected = false;
+  bool get isBrokerConnected => _isBrokerConnected;
+
+  bool _isDeviceOnline = false;
+  bool get isDeviceOnline => _isDeviceOnline;
+
+  // Last Update
+  DateTime? _lastUpdate;
+  String get lastUpdate => _lastUpdate != null
+      ? '${_lastUpdate!.hour}:${_lastUpdate!.minute}:${_lastUpdate!.second}'
+      : 'Never';
+
+  Consumer? _logConsumer;
+
+  void init(String? guid) async {
+    if (guid == null) return;
+
+    _isBrokerConnected = true;
+    notifyListeners();
+
+    try {
+      // Saga is event based, so 'saga_log_queue'
+      _logConsumer = await _brokerService.subscribe('saga_log_queue');
+      _logConsumer!.listen((AmqpMessage message) {
+        _logs.insert(
+          0,
+          '[${DateTime.now().toString().split(' ')[1].split('.')[0]}] ${message.payloadAsString}',
+        );
+        if (_logs.length > 50) _logs.removeLast();
+        _lastUpdate = DateTime.now();
+        _isDeviceOnline = true;
+        notifyListeners();
+      });
+    } catch (e) {
+      _logs.add('Error subscribing: $e');
+      _isBrokerConnected = false;
+      notifyListeners();
+    }
+  }
+
+  @override
+  void dispose() {
+    _logConsumer?.cancel();
+    super.dispose();
+  }
+}

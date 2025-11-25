@@ -1,0 +1,171 @@
+﻿Analyzing IWK_Control_center...                                 
+
+   info - The imported package 'home_automation' isn't a dependency of the importing package - docs\services\alert_service.dart:3:8 - depend_on_referenced_packages
+  error - Target of URI doesn't exist: 'package:home_automation/locator.dart' - docs\services\alert_service.dart:3:8 - uri_does_not_exist
+   info - The imported package 'home_automation' isn't a dependency of the importing package - docs\services\alert_service.dart:4:8 - depend_on_referenced_packages
+  error - Target of URI doesn't exist: 'package:home_automation/services/navgation_service.dart' - docs\services\alert_service.dart:4:8 - uri_does_not_exist
+  error - Undefined class 'NavigationService' - docs\services\alert_service.dart:6:9 - undefined_class
+  error - The method 'locator' isn't defined for the type 'AlertService' - docs\services\alert_service.dart:6:48 - undefined_method
+  error - The name 'NavigationService' isn't a type, so it can't be used as a type argument - docs\services\alert_service.dart:6:56 - non_type_as_type_argument
+   info - The 'child' argument should be last in widget constructor invocations - docs\services\alert_service.dart:18:15 - sort_child_properties_last
+   info - The 'child' argument should be last in widget constructor invocations - docs\services\alert_service.dart:27:15 - sort_child_properties_last
+   info - The 'child' argument should be last in widget constructor invocations - docs\services\alert_service.dart:50:17 - sort_child_properties_last
+   info - The 'child' argument should be last in widget constructor invocations - docs\services\alert_service.dart:72:15 - sort_child_properties_last
+   info - The 'child' argument should be last in widget constructor invocations - docs\services\alert_service.dart:93:15 - sort_child_properties_last
+   info - The imported package 'mqtt_client' isn't a dependency of the importing package - docs\services\mqtt_service.dart:2:8 - depend_on_referenced_packages
+  error - Target of URI doesn't exist: 'package:mqtt_client/mqtt_client.dart' - docs\services\mqtt_service.dart:2:8 - uri_does_not_exist
+   info - The imported package 'mqtt_client' isn't a dependency of the importing package - docs\services\mqtt_service.dart:3:8 - depend_on_referenced_packages
+  error - Target of URI doesn't exist: 'package:mqtt_client/mqtt_server_client.dart' - docs\services\mqtt_service.dart:3:8 - uri_does_not_exist
+  error - Undefined class 'MqttServerClient' - docs\services\mqtt_service.dart:6:3 - undefined_class
+  error - The method 'MqttServerClient' isn't defined for the type 'MqttService' - docs\services\mqtt_service.dart:12:14 - undefined_method
+  error - The name 'NoConnectionException' isn't a type and can't be used in an on-catch clause - docs\services\mqtt_service.dart:25:10 - non_type_in_catch_clause
+   info - Don't invoke 'print' in production code - docs\services\mqtt_service.dart:26:7 - avoid_print
+warning - Dead code: This on-catch block won't be executed because 'SocketException' is a subtype of 'InvalidType' and hence will have been caught already - docs\services\mqtt_service.dart:28:7 - dead_code_on_catch_subtype
+   info - Don't invoke 'print' in production code - docs\services\mqtt_service.dart:29:7 - avoid_print
+  error - Undefined class 'MqttServerClient' - docs\services\mqtt_service.dart:34:22 - undefined_class
+  error - The name 'MqttReceivedMessage' isn't a type, so it can't be used as a type argument - docs\services\mqtt_service.dart:46:40 - non_type_as_type_argument
+  error - The name 'MqttMessage' isn't a type, so it can't be used as a type argument - docs\services\mqtt_service.dart:46:60 - non_type_as_type_argument
+  error - Undefined class 'MqttPublishMessage' - docs\services\mqtt_service.dart:47:15 - undefined_class
+  error - The name 'MqttPublishMessage' isn't a type, so it can't be used in an 'as' expression - docs\services\mqtt_service.dart:47:60 - cast_to_non_type
+  error - Undefined name 'MqttPublishPayload' - docs\services\mqtt_service.dart:48:31 - undefined_identifier
+   info - Don't invoke 'print' in production code - docs\services\mqtt_service.dart:49:9 - avoid_print
+  error - The name 'NoConnectionException' isn't a type and can't be used in an on-catch clause - docs\services\mqtt_service.dart:53:10 - non_type_in_catch_clause
+   info - Don't invoke 'print' in production code - docs\services\mqtt_service.dart:54:7 - avoid_print
+warning - Dead code: This on-catch block won't be executed because 'SocketException' is a subtype of 'InvalidType' and hence will have been caught already - docs\services\mqtt_service.dart:56:7 - dead_code_on_catch_subtype
+   info - Don't invoke 'print' in production code - docs\services\mqtt_service.dart:57:7 - avoid_print
+  error - The method 'MqttServerClient' isn't defined for the type 'MqttService' - docs\services\mqtt_service.dart:64:14 - undefined_method
+  error - The name 'NoConnectionException' isn't a type and can't be used in an on-catch clause - docs\services\mqtt_service.dart:75:10 - non_type_in_catch_clause
+   info - Don't invoke 'print' in production code - docs\services\mqtt_service.dart:76:7 - avoid_print
+warning - Dead code: This on-catch block won't be executed because 'SocketException' is a subtype of 'InvalidType' and hence will have been caught already - docs\services\mqtt_service.dart:78:7 - dead_code_on_catch_subtype
+   info - Don't invoke 'print' in production code - docs\services\mqtt_service.dart:79:7 - avoid_print
+  error - Undefined class 'MqttServerClient' - docs\services\mqtt_service.dart:84:28 - undefined_class
+  error - The name 'NoConnectionException' isn't a type and can't be used in an on-catch clause - docs\services\mqtt_service.dart:95:10 - non_type_in_catch_clause
+   info - Don't invoke 'print' in production code - docs\services\mqtt_service.dart:96:7 - avoid_print
+warning - Dead code: This on-catch block won't be executed because 'SocketException' is a subtype of 'InvalidType' and hence will have been caught already - docs\services\mqtt_service.dart:98:7 - dead_code_on_catch_subtype
+   info - Don't invoke 'print' in production code - docs\services\mqtt_service.dart:99:7 - avoid_print
+   info - Don't invoke 'print' in production code - docs\services\mqtt_service.dart:106:5 - avoid_print
+   info - Don't invoke 'print' in production code - docs\services\mqtt_service.dart:110:5 - avoid_print
+  error - Undefined name 'MqttDisconnectionOrigin' - docs\services\mqtt_service.dart:114:58 - undefined_identifier
+   info - Missing type annotation - docs\services\mqtt_service.dart:120:3 - strict_top_level_inference
+  error - Undefined class 'MqttServerClient' - docs\services\mqtt_service.dart:120:22 - undefined_class
+  error - Undefined name 'MqttDisconnectionOrigin' - docs\services\mqtt_service.dart:121:61 - undefined_identifier
+  error - Undefined name 'MqttQos' - docs\services\mqtt_service.dart:128:30 - undefined_identifier
+  error - Undefined class 'MqttServerClient' - docs\services\mqtt_service.dart:131:24 - undefined_class
+  error - Undefined name 'MqttQos' - docs\services\mqtt_service.dart:132:33 - undefined_identifier
+  error - The method 'MqttClientPayloadBuilder' isn't defined for the type 'MqttService' - docs\services\mqtt_service.dart:136:21 - undefined_method
+  error - Undefined name 'MqttQos' - docs\services\mqtt_service.dart:138:35 - undefined_identifier
+   info - Don't invoke 'print' in production code - docs\services\mqtt_service.dart:139:5 - avoid_print
+  error - Undefined class 'MqttServerClient' - docs\services\mqtt_service.dart:142:22 - undefined_class
+  error - The method 'MqttClientPayloadBuilder' isn't defined for the type 'MqttService' - docs\services\mqtt_service.dart:143:21 - undefined_method
+  error - Undefined name 'MqttQos' - docs\services\mqtt_service.dart:145:38 - undefined_identifier
+   info - Don't invoke 'print' in production code - docs\services\mqtt_service.dart:146:5 - avoid_print
+   info - Unnecessary use of string interpolation - docs\services\navgation_service.dart:13:45 - unnecessary_string_interpolations
+   info - Don't invoke 'print' in production code - docs\services\rmq_service.dart:31:9 - avoid_print
+   info - Don't invoke 'print' in production code - docs\services\rmq_service.dart:32:9 - avoid_print
+   info - Don't invoke 'print' in production code - docs\services\rmq_service.dart:33:9 - avoid_print
+   info - Don't invoke 'print' in production code - docs\services\rmq_service.dart:34:9 - avoid_print
+   info - Don't invoke 'print' in production code - docs\services\rmq_service.dart:50:5 - avoid_print
+   info - Don't invoke 'print' in production code - docs\services\rmq_service.dart:52:7 - avoid_print
+   info - Don't invoke 'print' in production code - docs\services\rmq_service.dart:64:7 - avoid_print
+   info - Don't invoke 'print' in production code - docs\services\rmq_service.dart:72:7 - avoid_print
+   info - Don't invoke 'print' in production code - docs\services\rmq_service.dart:94:7 - avoid_print
+   info - The imported package 'shared_preferences' isn't a dependency of the importing package - docs\services\storage_service.dart:1:8 - depend_on_referenced_packages
+  error - Target of URI doesn't exist: 'package:shared_preferences/shared_preferences.dart' - docs\services\storage_service.dart:1:8 - uri_does_not_exist
+  error - Undefined class 'SharedPreferences' - docs\services\storage_service.dart:6:13 - undefined_class
+  error - Undefined name 'SharedPreferences' - docs\services\storage_service.dart:6:45 - undefined_identifier
+   info - Don't invoke 'print' in production code - docs\services\storage_service.dart:8:7 - avoid_print
+   info - Don't invoke 'print' in production code - docs\services\storage_service.dart:10:7 - avoid_print
+  error - Undefined class 'SharedPreferences' - docs\services\storage_service.dart:16:13 - undefined_class
+  error - Undefined name 'SharedPreferences' - docs\services\storage_service.dart:16:45 - undefined_identifier
+   info - Don't invoke 'print' in production code - docs\services\storage_service.dart:18:7 - avoid_print
+   info - Don't invoke 'print' in production code - docs\services\storage_service.dart:20:7 - avoid_print
+  error - Undefined class 'SharedPreferences' - docs\services\storage_service.dart:26:13 - undefined_class
+  error - Undefined name 'SharedPreferences' - docs\services\storage_service.dart:26:45 - undefined_identifier
+   info - Don't invoke 'print' in production code - docs\services\storage_service.dart:28:7 - avoid_print
+   info - Don't invoke 'print' in production code - docs\services\storage_service.dart:30:7 - avoid_print
+  error - Undefined class 'SharedPreferences' - docs\services\storage_service.dart:36:13 - undefined_class
+  error - Undefined name 'SharedPreferences' - docs\services\storage_service.dart:36:45 - undefined_identifier
+   info - Don't invoke 'print' in production code - docs\services\storage_service.dart:38:7 - avoid_print
+   info - Don't invoke 'print' in production code - docs\services\storage_service.dart:40:7 - avoid_print
+  error - Undefined class 'SharedPreferences' - docs\services\storage_service.dart:46:13 - undefined_class
+  error - Undefined name 'SharedPreferences' - docs\services\storage_service.dart:46:45 - undefined_identifier
+   info - Don't invoke 'print' in production code - docs\services\storage_service.dart:48:7 - avoid_print
+   info - Don't invoke 'print' in production code - docs\services\storage_service.dart:50:7 - avoid_print
+  error - Undefined class 'SharedPreferences' - docs\services\storage_service.dart:56:13 - undefined_class
+  error - Undefined name 'SharedPreferences' - docs\services\storage_service.dart:56:45 - undefined_identifier
+   info - Don't invoke 'print' in production code - docs\services\storage_service.dart:61:7 - avoid_print
+  error - Undefined class 'SharedPreferences' - docs\services\storage_service.dart:68:13 - undefined_class
+  error - Undefined name 'SharedPreferences' - docs\services\storage_service.dart:68:45 - undefined_identifier
+   info - Don't invoke 'print' in production code - docs\services\storage_service.dart:73:7 - avoid_print
+  error - Undefined class 'SharedPreferences' - docs\services\storage_service.dart:80:13 - undefined_class
+  error - Undefined name 'SharedPreferences' - docs\services\storage_service.dart:80:45 - undefined_identifier
+   info - Don't invoke 'print' in production code - docs\services\storage_service.dart:85:7 - avoid_print
+  error - Undefined class 'SharedPreferences' - docs\services\storage_service.dart:92:13 - undefined_class
+  error - Undefined name 'SharedPreferences' - docs\services\storage_service.dart:92:45 - undefined_identifier
+   info - Don't invoke 'print' in production code - docs\services\storage_service.dart:97:7 - avoid_print
+   info - Parameter 'key' could be a super parameter - lib\main.dart:13:9 - use_super_parameters
+   info - Don't invoke 'print' in production code - lib\services\message_broker_service.dart:63:7 - avoid_print
+  error - 'ChooseIwkViewModel' doesn't conform to the bound 'ChangeNotifier' of the type parameter 'T' - lib\ui\views\chooseiwk_view.dart:5:41 - type_argument_not_matching_bounds
+   info - Parameter 'key' could be a super parameter - lib\ui\views\chooseiwk_view.dart:6:9 - use_super_parameters
+  error - 'DashboardViewModel' doesn't conform to the bound 'ChangeNotifier' of the type parameter 'T' - lib\ui\views\dashboard_view.dart:5:41 - type_argument_not_matching_bounds
+   info - Parameter 'key' could be a super parameter - lib\ui\views\dashboard_view.dart:6:9 - use_super_parameters
+  error - 'EnvPageViewModel' doesn't conform to the bound 'ChangeNotifier' of the type parameter 'T' - lib\ui\views\iwkpage\envpage_view.dart:5:39 - type_argument_not_matching_bounds
+   info - Parameter 'key' could be a super parameter - lib\ui\views\iwkpage\envpage_view.dart:8:9 - use_super_parameters
+  error - 'GravityViewModel' doesn't conform to the bound 'ChangeNotifier' of the type parameter 'T' - lib\ui\views\iwkpage\gravity_view.dart:5:39 - type_argument_not_matching_bounds
+   info - Parameter 'key' could be a super parameter - lib\ui\views\iwkpage\gravity_view.dart:8:9 - use_super_parameters
+  error - 'HomePageViewModel' doesn't conform to the bound 'ChangeNotifier' of the type parameter 'T' - lib\ui\views\iwkpage\homepage._view.dart:5:40 - type_argument_not_matching_bounds
+   info - Parameter 'key' could be a super parameter - lib\ui\views\iwkpage\homepage._view.dart:8:9 - use_super_parameters
+  error - 'SagaPageViewModel' doesn't conform to the bound 'ChangeNotifier' of the type parameter 'T' - lib\ui\views\iwkpage\sagapage_view.dart:5:40 - type_argument_not_matching_bounds
+   info - Parameter 'key' could be a super parameter - lib\ui\views\iwkpage\sagapage_view.dart:8:9 - use_super_parameters
+  error - 'WaterPageViewModel' doesn't conform to the bound 'ChangeNotifier' of the type parameter 'T' - lib\ui\views\iwkpage\waterpage_view.dart:5:41 - type_argument_not_matching_bounds
+   info - Parameter 'key' could be a super parameter - lib\ui\views\iwkpage\waterpage_view.dart:9:9 - use_super_parameters
+  error - 'LoginViewModel' doesn't conform to the bound 'ChangeNotifier' of the type parameter 'T' - lib\ui\views\login_view.dart:5:37 - type_argument_not_matching_bounds
+   info - Parameter 'key' could be a super parameter - lib\ui\views\login_view.dart:6:9 - use_super_parameters
+  error - The getter 'busy' isn't defined for the type 'LoginViewModel' - lib\ui\views\login_view.dart:17:26 - undefined_getter
+  error - 'UniqueCredentialViewModel' doesn't conform to the bound 'ChangeNotifier' of the type parameter 'T' - lib\ui\views\uniquecredential_view.dart:5:48 - type_argument_not_matching_bounds
+   info - Parameter 'key' could be a super parameter - lib\ui\views\uniquecredential_view.dart:7:9 - use_super_parameters
+  error - Classes can only extend other classes - lib\viewmodels\chooseiwk_view_modal.dart:7:34 - extends_non_class
+  error - The name 'BaseViewModel' is defined in the libraries 'package:iwk_control_center/viewmodels/base_viewmodel.dart' and 'package:stacked/src/view_models/base_view_models.dart (via package:stacked/stacked.dart)' - lib\viewmodels\chooseiwk_view_modal.dart:7:34 - ambiguous_import
+  error - Classes can only extend other classes - lib\viewmodels\dashboard_view_modal.dart:7:34 - extends_non_class
+  error - The name 'BaseViewModel' is defined in the libraries 'package:iwk_control_center/viewmodels/base_viewmodel.dart' and 'package:stacked/src/view_models/base_view_models.dart (via package:stacked/stacked.dart)' - lib\viewmodels\dashboard_view_modal.dart:7:34 - ambiguous_import
+  error - Classes can only extend other classes - lib\viewmodels\iwkpage\envpage_view_modal.dart:7:32 - extends_non_class
+  error - The name 'BaseViewModel' is defined in the libraries 'package:iwk_control_center/viewmodels/base_viewmodel.dart' and 'package:stacked/src/view_models/base_view_models.dart (via package:stacked/stacked.dart)' - lib\viewmodels\iwkpage\envpage_view_modal.dart:7:32 - ambiguous_import
+  error - The method 'notifyListeners' isn't defined for the type 'EnvPageViewModel' - lib\viewmodels\iwkpage\envpage_view_modal.dart:22:9 - undefined_method
+  error - The method 'notifyListeners' isn't defined for the type 'EnvPageViewModel' - lib\viewmodels\iwkpage\envpage_view_modal.dart:26:7 - undefined_method
+warning - The method doesn't override an inherited method - lib\viewmodels\iwkpage\envpage_view_modal.dart:31:8 - override_on_non_overriding_member
+  error - The method 'dispose' isn't defined in a superclass of 'EnvPageViewModel' - lib\viewmodels\iwkpage\envpage_view_modal.dart:33:11 - undefined_super_member
+  error - Classes can only extend other classes - lib\viewmodels\iwkpage\gravity_view_modal.dart:7:32 - extends_non_class
+  error - The name 'BaseViewModel' is defined in the libraries 'package:iwk_control_center/viewmodels/base_viewmodel.dart' and 'package:stacked/src/view_models/base_view_models.dart (via package:stacked/stacked.dart)' - lib\viewmodels\iwkpage\gravity_view_modal.dart:7:32 - ambiguous_import
+  error - The method 'notifyListeners' isn't defined for the type 'GravityViewModel' - lib\viewmodels\iwkpage\gravity_view_modal.dart:22:9 - undefined_method
+  error - The method 'notifyListeners' isn't defined for the type 'GravityViewModel' - lib\viewmodels\iwkpage\gravity_view_modal.dart:26:7 - undefined_method
+warning - The method doesn't override an inherited method - lib\viewmodels\iwkpage\gravity_view_modal.dart:31:8 - override_on_non_overriding_member
+  error - The method 'dispose' isn't defined in a superclass of 'GravityViewModel' - lib\viewmodels\iwkpage\gravity_view_modal.dart:33:11 - undefined_super_member
+  error - Classes can only extend other classes - lib\viewmodels\iwkpage\homepage._view_modal.dart:7:33 - extends_non_class
+  error - The name 'BaseViewModel' is defined in the libraries 'package:iwk_control_center/viewmodels/base_viewmodel.dart' and 'package:stacked/src/view_models/base_view_models.dart (via package:stacked/stacked.dart)' - lib\viewmodels\iwkpage\homepage._view_modal.dart:7:33 - ambiguous_import
+  error - The method 'notifyListeners' isn't defined for the type 'HomePageViewModel' - lib\viewmodels\iwkpage\homepage._view_modal.dart:22:9 - undefined_method
+  error - The method 'notifyListeners' isn't defined for the type 'HomePageViewModel' - lib\viewmodels\iwkpage\homepage._view_modal.dart:26:7 - undefined_method
+warning - The method doesn't override an inherited method - lib\viewmodels\iwkpage\homepage._view_modal.dart:31:8 - override_on_non_overriding_member
+  error - The method 'dispose' isn't defined in a superclass of 'HomePageViewModel' - lib\viewmodels\iwkpage\homepage._view_modal.dart:33:11 - undefined_super_member
+  error - Classes can only extend other classes - lib\viewmodels\iwkpage\sagapage_view_modal.dart:7:33 - extends_non_class
+  error - The name 'BaseViewModel' is defined in the libraries 'package:iwk_control_center/viewmodels/base_viewmodel.dart' and 'package:stacked/src/view_models/base_view_models.dart (via package:stacked/stacked.dart)' - lib\viewmodels\iwkpage\sagapage_view_modal.dart:7:33 - ambiguous_import
+   info - The private field _logs could be 'final' - lib\viewmodels\iwkpage\sagapage_view_modal.dart:10:16 - prefer_final_fields
+  error - The method 'notifyListeners' isn't defined for the type 'SagaPageViewModel' - lib\viewmodels\iwkpage\sagapage_view_modal.dart:23:9 - undefined_method
+  error - The method 'notifyListeners' isn't defined for the type 'SagaPageViewModel' - lib\viewmodels\iwkpage\sagapage_view_modal.dart:27:7 - undefined_method
+warning - The method doesn't override an inherited method - lib\viewmodels\iwkpage\sagapage_view_modal.dart:32:8 - override_on_non_overriding_member
+  error - The method 'dispose' isn't defined in a superclass of 'SagaPageViewModel' - lib\viewmodels\iwkpage\sagapage_view_modal.dart:34:11 - undefined_super_member
+  error - Classes can only extend other classes - lib\viewmodels\iwkpage\waterpage_view_modal.dart:7:34 - extends_non_class
+  error - The name 'BaseViewModel' is defined in the libraries 'package:iwk_control_center/viewmodels/base_viewmodel.dart' and 'package:stacked/src/view_models/base_view_models.dart (via package:stacked/stacked.dart)' - lib\viewmodels\iwkpage\waterpage_view_modal.dart:7:34 - ambiguous_import
+  error - The method 'notifyListeners' isn't defined for the type 'WaterPageViewModel' - lib\viewmodels\iwkpage\waterpage_view_modal.dart:26:9 - undefined_method
+  error - The method 'notifyListeners' isn't defined for the type 'WaterPageViewModel' - lib\viewmodels\iwkpage\waterpage_view_modal.dart:30:7 - undefined_method
+warning - The method doesn't override an inherited method - lib\viewmodels\iwkpage\waterpage_view_modal.dart:35:8 - override_on_non_overriding_member
+  error - The method 'dispose' isn't defined in a superclass of 'WaterPageViewModel' - lib\viewmodels\iwkpage\waterpage_view_modal.dart:37:11 - undefined_super_member
+  error - Classes can only extend other classes - lib\viewmodels\login_view_modal.dart:9:30 - extends_non_class
+  error - The name 'BaseViewModel' is defined in the libraries 'package:iwk_control_center/viewmodels/base_viewmodel.dart' and 'package:stacked/src/view_models/base_view_models.dart (via package:stacked/stacked.dart)' - lib\viewmodels\login_view_modal.dart:9:30 - ambiguous_import
+  error - The method 'setBusy' isn't defined for the type 'LoginViewModel' - lib\viewmodels\login_view_modal.dart:29:5 - undefined_method
+  error - The method 'notifyListeners' isn't defined for the type 'LoginViewModel' - lib\viewmodels\login_view_modal.dart:31:5 - undefined_method
+  error - The method 'notifyListeners' isn't defined for the type 'LoginViewModel' - lib\viewmodels\login_view_modal.dart:45:7 - undefined_method
+  error - The method 'setBusy' isn't defined for the type 'LoginViewModel' - lib\viewmodels\login_view_modal.dart:47:7 - undefined_method
+  error - Classes can only extend other classes - lib\viewmodels\uniquecredential_view_modal.dart:8:41 - extends_non_class
+  error - The name 'BaseViewModel' is defined in the libraries 'package:iwk_control_center/viewmodels/base_viewmodel.dart' and 'package:stacked/src/view_models/base_view_models.dart (via package:stacked/stacked.dart)' - lib\viewmodels\uniquecredential_view_modal.dart:8:41 - ambiguous_import
+  error - The method 'notifyListeners' isn't defined for the type 'UniqueCredentialViewModel' - lib\viewmodels\uniquecredential_view_modal.dart:33:5 - undefined_method
+
