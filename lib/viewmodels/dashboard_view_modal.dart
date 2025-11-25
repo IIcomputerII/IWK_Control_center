@@ -12,7 +12,6 @@ class DashboardViewModel extends BaseViewModel {
     'Environmental Sensor',
     'Center of Gravity',
     'Home Automation',
-    'AntiGravity',
   ];
 
   // Module registry to determine GUID requirements
@@ -22,7 +21,6 @@ class DashboardViewModel extends BaseViewModel {
     'Environmental Sensor': {'requiresGuid': true, 'route': Routes.envPageView},
     'Center of Gravity': {'requiresGuid': true, 'route': Routes.gravityView},
     'Home Automation': {'requiresGuid': true, 'route': Routes.homePageView},
-    'AntiGravity': {'requiresGuid': true, 'route': Routes.homePageView},
   };
 
   void selectModule(String moduleName) {

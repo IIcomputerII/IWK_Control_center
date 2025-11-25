@@ -29,15 +29,17 @@ class EnvPageViewModel extends BaseViewModel {
   Consumer? _sensorConsumer;
   Consumer? _logConsumer;
 
-  void init(String? guid) async {
+  void init(String? guid, String? topic) async {
     if (guid == null) return;
+
+    final String safeTopic = topic?.isNotEmpty == true ? topic! : 'environment';
 
     _isBrokerConnected = true;
     notifyListeners();
 
     try {
       // Subscribe to sensor queue
-      _sensorConsumer = await _brokerService.subscribe('env_sensor_queue');
+      _sensorConsumer = await _brokerService.subscribe('$safeTopic.sensor');
       _sensorConsumer!.listen((AmqpMessage message) {
         _data = message.payloadAsString;
         _lastUpdate = DateTime.now();
@@ -46,7 +48,7 @@ class EnvPageViewModel extends BaseViewModel {
       });
 
       // Subscribe to log queue
-      _logConsumer = await _brokerService.subscribe('env_log_queue');
+      _logConsumer = await _brokerService.subscribe('$safeTopic.log');
       _logConsumer!.listen((AmqpMessage message) {
         _logs.insert(
           0,

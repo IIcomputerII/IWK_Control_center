@@ -11,7 +11,7 @@ class HomePageView extends StackedView<HomePageViewModel> {
 
   @override
   void onViewModelReady(HomePageViewModel viewModel) {
-    viewModel.init(guid);
+    viewModel.init(guid, topic);
     super.onViewModelReady(viewModel);
   }
 

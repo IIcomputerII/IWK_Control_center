@@ -29,15 +29,19 @@ class WaterPageViewModel extends BaseViewModel {
   Consumer? _sensorConsumer;
   Consumer? _logConsumer;
 
-  void init(String? guid) async {
+  void init(String? guid, String? topic) async {
     if (guid == null) return;
+
+    final String safeTopic = topic?.isNotEmpty == true
+        ? topic!
+        : 'smart_watering';
 
     _isBrokerConnected = true; // Assume connected if we got here from login
     notifyListeners();
 
     try {
       // Subscribe to sensor queue
-      _sensorConsumer = await _brokerService.subscribe('water_sensor_queue');
+      _sensorConsumer = await _brokerService.subscribe('$safeTopic.sensor');
       _sensorConsumer!.listen((AmqpMessage message) {
         _data = message.payloadAsString;
         _lastUpdate = DateTime.now();
@@ -46,7 +50,7 @@ class WaterPageViewModel extends BaseViewModel {
       });
 
       // Subscribe to log queue
-      _logConsumer = await _brokerService.subscribe('water_log_queue');
+      _logConsumer = await _brokerService.subscribe('$safeTopic.log');
       _logConsumer!.listen((AmqpMessage message) {
         _logs.insert(
           0,

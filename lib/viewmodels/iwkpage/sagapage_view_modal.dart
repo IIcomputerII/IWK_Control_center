@@ -24,23 +24,38 @@ class SagaPageViewModel extends BaseViewModel {
 
   Consumer? _logConsumer;
 
-  void init(String? guid) async {
+  Consumer? _eventConsumer;
+
+  void init(String? guid, String? topic) async {
     if (guid == null) return;
+
+    final String safeTopic = topic?.isNotEmpty == true ? topic! : 'smart_saga';
 
     _isBrokerConnected = true;
     notifyListeners();
 
     try {
-      // Saga is event based, so 'saga_log_queue'
-      _logConsumer = await _brokerService.subscribe('saga_log_queue');
-      _logConsumer!.listen((AmqpMessage message) {
+      // Subscribe to event topic
+      _eventConsumer = await _brokerService.subscribe('$safeTopic.event');
+      _eventConsumer!.listen((AmqpMessage message) {
         _logs.insert(
           0,
-          '[${DateTime.now().toString().split(' ')[1].split('.')[0]}] ${message.payloadAsString}',
+          '[EVENT] [${DateTime.now().toString().split(' ')[1].split('.')[0]}] ${message.payloadAsString}',
         );
         if (_logs.length > 50) _logs.removeLast();
         _lastUpdate = DateTime.now();
         _isDeviceOnline = true;
+        notifyListeners();
+      });
+
+      // Subscribe to log topic
+      _logConsumer = await _brokerService.subscribe('$safeTopic.log');
+      _logConsumer!.listen((AmqpMessage message) {
+        _logs.insert(
+          0,
+          '[LOG] [${DateTime.now().toString().split(' ')[1].split('.')[0]}] ${message.payloadAsString}',
+        );
+        if (_logs.length > 50) _logs.removeLast();
         notifyListeners();
       });
     } catch (e) {

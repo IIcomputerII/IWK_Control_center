@@ -11,7 +11,7 @@ class SagaPageView extends StackedView<SagaPageViewModel> {
 
   @override
   void onViewModelReady(SagaPageViewModel viewModel) {
-    viewModel.init(guid);
+    viewModel.init(guid, topic);
     super.onViewModelReady(viewModel);
   }
 

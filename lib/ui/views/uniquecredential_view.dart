@@ -5,8 +5,7 @@ import 'qr_scanner_view.dart';
 
 class UniqueCredentialView extends StackedView<UniqueCredentialViewModel> {
   final String iwkType;
-  const UniqueCredentialView({Key? key, required this.iwkType})
-    : super(key: key);
+  const UniqueCredentialView({super.key, required this.iwkType});
 
   @override
   void onViewModelReady(UniqueCredentialViewModel viewModel) {
@@ -42,6 +41,16 @@ class UniqueCredentialView extends StackedView<UniqueCredentialViewModel> {
             ),
             const SizedBox(height: 30),
             if (viewModel.requiresGuid) ...[
+              TextField(
+                controller: viewModel.keywordController,
+                decoration: const InputDecoration(
+                  labelText: 'Keyword/Topic',
+                  hintText: 'Enter topic (optional)',
+                  border: OutlineInputBorder(),
+                  prefixIcon: Icon(Icons.label),
+                ),
+              ),
+              const SizedBox(height: 20),
               TextField(
                 controller: viewModel.guidController,
                 decoration: const InputDecoration(
@@ -81,7 +90,7 @@ class UniqueCredentialView extends StackedView<UniqueCredentialViewModel> {
                   ),
                 );
                 if (result != null && result is String) {
-                  viewModel.guidController.text = result;
+                  viewModel.handleQrResult(result);
                 }
               },
               icon: const Icon(Icons.qr_code_scanner),

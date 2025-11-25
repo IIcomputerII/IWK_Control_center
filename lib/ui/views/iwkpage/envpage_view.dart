@@ -11,7 +11,7 @@ class EnvPageView extends StackedView<EnvPageViewModel> {
 
   @override
   void onViewModelReady(EnvPageViewModel viewModel) {
-    viewModel.init(guid);
+    viewModel.init(guid, topic);
     super.onViewModelReady(viewModel);
   }
 

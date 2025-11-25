@@ -11,7 +11,7 @@ class GravityView extends StackedView<GravityViewModel> {
 
   @override
   void onViewModelReady(GravityViewModel viewModel) {
-    viewModel.init(guid);
+    viewModel.init(guid, topic);
     super.onViewModelReady(viewModel);
   }
 

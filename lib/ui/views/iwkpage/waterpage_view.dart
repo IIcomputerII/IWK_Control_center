@@ -11,7 +11,7 @@ class WaterPageView extends StackedView<WaterPageViewModel> {
 
   @override
   void onViewModelReady(WaterPageViewModel viewModel) {
-    viewModel.init(guid);
+    viewModel.init(guid, topic);
     super.onViewModelReady(viewModel);
   }
 
