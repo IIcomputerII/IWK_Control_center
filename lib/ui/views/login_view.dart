@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:iwk_control_center/ui/widgets/bordertextfield.dart';
 import 'package:stacked/stacked.dart';
 import '../../viewmodels/login_view_modal.dart';
 
@@ -18,7 +19,6 @@ class LoginView extends StackedView<LoginViewModel> {
     Widget? child,
   ) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Login Broker')),
       body: Center(
         child: viewModel.isBusy
             ? const CircularProgressIndicator()
@@ -27,10 +27,10 @@ class LoginView extends StackedView<LoginViewModel> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Icon(
-                      Icons.cloud_circle,
-                      size: 100,
-                      color: Colors.blue,
+                    Image.asset(  
+                      'assets/images/logo.png',
+                      width: 200,
+                      height: 200,
                     ),
                     const SizedBox(height: 20),
                     const Text(
@@ -51,41 +51,29 @@ class LoginView extends StackedView<LoginViewModel> {
                         padding: const EdgeInsets.all(20.0),
                         child: Column(
                           children: [
-                            TextField(
+                            BorderTextField(
                               controller: viewModel.userController,
-                              decoration: const InputDecoration(
-                                labelText: 'User',
-                                prefixIcon: Icon(Icons.person),
-                                border: OutlineInputBorder(),
-                              ),
+                              icon: Icons.person,
+                              labelText: 'User',
                             ),
                             const SizedBox(height: 15),
-                            TextField(
+                            BorderTextField(
                               controller: viewModel.passwordController,
-                              decoration: const InputDecoration(
-                                labelText: 'Password',
-                                prefixIcon: Icon(Icons.lock),
-                                border: OutlineInputBorder(),
-                              ),
+                              icon: Icons.lock,
+                              labelText: 'Password',
                               obscureText: true,
                             ),
                             const SizedBox(height: 15),
-                            TextField(
+                            BorderTextField(
                               controller: viewModel.hostController,
-                              decoration: const InputDecoration(
-                                labelText: 'Host',
-                                prefixIcon: Icon(Icons.dns),
-                                border: OutlineInputBorder(),
-                              ),
+                              icon: Icons.dns,
+                              labelText: 'Host',
                             ),
                             const SizedBox(height: 15),
-                            TextField(
+                            BorderTextField(
                               controller: viewModel.vhostController,
-                              decoration: const InputDecoration(
-                                labelText: 'Virtual Host',
-                                prefixIcon: Icon(Icons.folder_shared),
-                                border: OutlineInputBorder(),
-                              ),
+                              icon: Icons.folder_shared,
+                              labelText: 'Virtual Host',
                             ),
                             if (viewModel.errorMessage != null)
                               Padding(
@@ -108,7 +96,7 @@ class LoginView extends StackedView<LoginViewModel> {
                                 ),
                                 child: const Text(
                                   'Login',
-                                  style: TextStyle(fontSize: 18),
+                                  style: TextStyle(fontSize: 18, color: Colors.blue),
                                 ),
                               ),
                             ),

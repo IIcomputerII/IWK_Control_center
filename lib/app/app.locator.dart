@@ -12,7 +12,7 @@ import 'package:stacked_services/src/dialog/dialog_service.dart';
 import 'package:stacked_services/src/navigation/navigation_service.dart';
 import 'package:stacked_shared/stacked_shared.dart';
 
-import '../services/message_broker_service.dart';
+import '../services/mqtt_sevice.dart';
 import '../services/storage_service.dart';
 
 final locator = StackedLocator.instance;
@@ -31,6 +31,6 @@ Future<void> setupLocator({
   locator.registerLazySingleton(() => NavigationService());
   locator.registerLazySingleton(() => DialogService());
   locator.registerLazySingleton(() => BottomSheetService());
-  locator.registerLazySingleton(() => MessageBrokerService());
+  locator.registerLazySingleton(() => MQTTService());
   locator.registerLazySingleton(() => StorageService());
 }

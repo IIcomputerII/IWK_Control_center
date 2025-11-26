@@ -1,10 +1,10 @@
 import 'package:dart_amqp/dart_amqp.dart';
 import 'package:stacked/stacked.dart';
 import '../../app/app.locator.dart';
-import '../../services/message_broker_service.dart';
+import '../../services/mqtt_sevice.dart';
 
 class SagaPageViewModel extends BaseViewModel {
-  final _brokerService = locator<MessageBrokerService>();
+  final _brokerService = locator<MQTTService>();
 
   List<String> _logs = [];
   List<String> get logs => _logs;

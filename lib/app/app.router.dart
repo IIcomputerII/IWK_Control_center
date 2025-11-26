@@ -8,6 +8,7 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:flutter/material.dart' as _i11;
 import 'package:flutter/material.dart';
+import 'package:iwk_control_center/model/data_model.dart';
 import 'package:iwk_control_center/ui/views/chooseiwk_view.dart' as _i4;
 import 'package:iwk_control_center/ui/views/dashboard_view.dart' as _i3;
 import 'package:iwk_control_center/ui/views/iwkpage/envpage_view.dart' as _i8;
@@ -98,7 +99,7 @@ class StackedRouter extends _i1.RouterBase {
       final args = data.getArgs<UniqueCredentialViewArguments>(nullOk: false);
       return _i11.MaterialPageRoute<dynamic>(
         builder: (context) =>
-            _i5.UniqueCredentialView(key: args.key, iwkType: args.iwkType),
+            _i5.UniqueCredentialView(key: args.key, config: args.config),
         settings: data,
       );
     },
@@ -234,26 +235,26 @@ class ChooseIwkViewArguments {
 }
 
 class UniqueCredentialViewArguments {
-  const UniqueCredentialViewArguments({this.key, required this.iwkType});
+  const UniqueCredentialViewArguments({this.key, required this.config});
 
   final _i11.Key? key;
 
-  final String iwkType;
+  final IWKConfig config;
 
   @override
   String toString() {
-    return '{"key": "$key", "iwkType": "$iwkType"}';
+    return '{"key": "$key", "config": "$config"}';
   }
 
   @override
   bool operator ==(covariant UniqueCredentialViewArguments other) {
     if (identical(this, other)) return true;
-    return other.key == key && other.iwkType == iwkType;
+    return other.key == key && other.config == config;
   }
 
   @override
   int get hashCode {
-    return key.hashCode ^ iwkType.hashCode;
+    return key.hashCode ^ config.hashCode;
   }
 }
 
@@ -444,7 +445,7 @@ extension NavigatorStateExtension on _i12.NavigationService {
 
   Future<dynamic> navigateToUniqueCredentialView({
     _i11.Key? key,
-    required String iwkType,
+    required IWKConfig config,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
@@ -453,7 +454,7 @@ extension NavigatorStateExtension on _i12.NavigationService {
   }) async {
     return navigateTo<dynamic>(
       Routes.uniqueCredentialView,
-      arguments: UniqueCredentialViewArguments(key: key, iwkType: iwkType),
+      arguments: UniqueCredentialViewArguments(key: key, config: config),
       id: routerId,
       preventDuplicates: preventDuplicates,
       parameters: parameters,
@@ -617,7 +618,7 @@ extension NavigatorStateExtension on _i12.NavigationService {
 
   Future<dynamic> replaceWithUniqueCredentialView({
     _i11.Key? key,
-    required String iwkType,
+    required IWKConfig config,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
@@ -626,7 +627,7 @@ extension NavigatorStateExtension on _i12.NavigationService {
   }) async {
     return replaceWith<dynamic>(
       Routes.uniqueCredentialView,
-      arguments: UniqueCredentialViewArguments(key: key, iwkType: iwkType),
+      arguments: UniqueCredentialViewArguments(key: key, config: config),
       id: routerId,
       preventDuplicates: preventDuplicates,
       parameters: parameters,

@@ -3,12 +3,12 @@ import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 import '../app/app.locator.dart';
 import '../app/app.router.dart';
-import '../services/message_broker_service.dart';
+import '../services/mqtt_sevice.dart';
 import '../services/storage_service.dart';
 
 class LoginViewModel extends BaseViewModel {
   final _navigationService = locator<NavigationService>();
-  final _brokerService = locator<MessageBrokerService>();
+  final _brokerService = locator<MQTTService>();
   final _storageService = locator<StorageService>();
 
   final TextEditingController userController = TextEditingController(

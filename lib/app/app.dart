@@ -9,7 +9,7 @@ import '../ui/views/iwkpage/sagapage_view.dart';
 import '../ui/views/iwkpage/envpage_view.dart';
 import '../ui/views/iwkpage/gravity_view.dart';
 import '../ui/views/iwkpage/homepage._view.dart';
-import '../services/message_broker_service.dart';
+import '../services/mqtt_sevice.dart';
 import '../services/storage_service.dart';
 
 @StackedApp(
@@ -28,7 +28,7 @@ import '../services/storage_service.dart';
     LazySingleton(classType: NavigationService),
     LazySingleton(classType: DialogService),
     LazySingleton(classType: BottomSheetService),
-    LazySingleton(classType: MessageBrokerService),
+    LazySingleton(classType: MQTTService),
     LazySingleton(classType: StorageService),
   ],
 )

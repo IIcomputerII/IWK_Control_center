@@ -14,11 +14,11 @@ class ChooseIwkView extends StackedView<ChooseIwkViewModel> {
     return Scaffold(
       appBar: AppBar(title: const Text('Choose IWK Device')),
       body: ListView.builder(
-        itemCount: viewModel.options.length,
+        itemCount: viewModel.cardOptions.length,
         itemBuilder: (context, index) {
-          final option = viewModel.options[index];
+          final option = viewModel.cardOptions[index];
           return ListTile(
-            title: Text(option),
+            title: Text(option.name),
             trailing: const Icon(Icons.arrow_forward_ios),
             onTap: () => viewModel.selectOption(option),
           );

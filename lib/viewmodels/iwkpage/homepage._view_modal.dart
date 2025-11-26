@@ -1,10 +1,10 @@
 import 'package:dart_amqp/dart_amqp.dart';
 import 'package:stacked/stacked.dart';
 import '../../app/app.locator.dart';
-import '../../services/message_broker_service.dart';
+import '../../services/mqtt_sevice.dart';
 
 class HomePageViewModel extends BaseViewModel {
-  final _brokerService = locator<MessageBrokerService>();
+  final _brokerService = locator<MQTTService>();
 
   String _data = 'Waiting for data...';
   String get data => _data;

@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:dart_amqp/dart_amqp.dart';
 import 'package:stacked/stacked.dart';
 
-class MessageBrokerService with ListenableServiceMixin {
+class MQTTService with ListenableServiceMixin {
   Client? _client;
   Channel? _channel;
 
