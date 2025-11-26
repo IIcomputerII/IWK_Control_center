@@ -24,14 +24,13 @@ class HomePageView extends StackedView<HomePageViewModel> {
     return Scaffold(
       backgroundColor: Colors.cyan.shade700,
       appBar: AppBar(
-        title: const Text(
-          'HOME AUTOMATION',
-          style: TextStyle(fontWeight: FontWeight.bold),
+        // Use dynamic device name from ViewModel
+        title: Text(
+          viewModel.deviceName,
+          style: const TextStyle(fontWeight: FontWeight.bold),
         ),
+        centerTitle: true,
         backgroundColor: Colors.cyan.shade800,
-        actions: [
-          IconButton(icon: const Icon(Icons.grid_view), onPressed: () {}),
-        ],
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
@@ -65,6 +64,7 @@ class HomePageView extends StackedView<HomePageViewModel> {
               ),
             ),
             const SizedBox(height: 16),
+
             // Control Cards Row
             Row(
               children: [
@@ -72,8 +72,8 @@ class HomePageView extends StackedView<HomePageViewModel> {
                   child: _buildControlCard(
                     'Lampu\nTrainer',
                     Icons.lightbulb_outline,
-                    false,
-                    () {},
+                    viewModel.isSaklarOn,
+                    viewModel.toggleSaklar,
                   ),
                 ),
                 const SizedBox(width: 16),
@@ -81,13 +81,14 @@ class HomePageView extends StackedView<HomePageViewModel> {
                   child: _buildControlCard(
                     'Steker\nTrainer',
                     Icons.flash_on,
-                    false,
-                    () {},
+                    viewModel.isStekerOn,
+                    viewModel.toggleSteker,
                   ),
                 ),
               ],
             ),
             const SizedBox(height: 16),
+
             // Reset Button
             SizedBox(
               width: double.infinity,
@@ -113,12 +114,6 @@ class HomePageView extends StackedView<HomePageViewModel> {
             ),
           ],
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.cyan.shade700,
-        onPressed: () {},
-        child: const Icon(Icons.add),
       ),
     );
   }

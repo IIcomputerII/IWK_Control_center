@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:iwk_control_center/model/data_model.dart';
 import 'package:iwk_control_center/ui/widgets/uniquecredential/credentialgroup.dart';
-import 'package:iwk_control_center/ui/widgets/uniquecredential/infocard.dart'; 
+import 'package:iwk_control_center/ui/widgets/uniquecredential/infocard.dart';
 import 'package:stacked/stacked.dart';
 import '../../viewmodels/uniquecredential_view_modal.dart';
 import 'qr_scanner_view.dart';
 import '../widgets/BorderTextField.dart';
 
 class UniqueCredentialView extends StackedView<UniqueCredentialViewModel> {
-  final IWKConfig config; 
+  final IWKConfig config;
   const UniqueCredentialView({super.key, required this.config});
 
   @override
@@ -20,15 +20,14 @@ class UniqueCredentialView extends StackedView<UniqueCredentialViewModel> {
   @override
   Widget builder(
     BuildContext context,
-    UniqueCredentialViewModel viewModel,
+    UniqueCredentialViewModel vm,
     Widget? child,
   ) {
     final screenWidth = MediaQuery.of(context).size.width;
-    
-    final Color hintColor = config.primaryColor.withOpacity(0.7); 
+    final hintColor = config.primaryColor.withOpacity(0.7);
 
     return Scaffold(
-      backgroundColor: Colors.white, 
+      backgroundColor: Colors.white,
       appBar: AppBar(
         title: const Text('Device Credentials'),
         centerTitle: true,
@@ -42,77 +41,87 @@ class UniqueCredentialView extends StackedView<UniqueCredentialViewModel> {
           children: [
             Infocard(config: config, width: screenWidth),
             const SizedBox(height: 30),
-if (config.name == 'Home Automation') 
-              ..._buildHomeAutomationFields(viewModel, hintColor, config.backgroundColor, config.primaryColor)
-            else 
-              ..._buildDefaultFields(viewModel, hintColor, config.primaryColor),
 
+            // Tampilkan field sesuai module type
+            if (config.name == 'Home Automation')
+              ..._buildHomeFields(vm, hintColor, config)
+            else
+              ..._buildStandardFields(vm, hintColor, config),
+
+            const SizedBox(height: 20),
+
+            // Tombol submit
             SizedBox(
               width: double.infinity,
               height: 55,
               child: ElevatedButton(
-                onPressed: viewModel.submit, 
+                onPressed: vm.submitAndNavigate,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: config.backgroundColor, 
+                  backgroundColor: config.backgroundColor,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(5), 
+                    borderRadius: BorderRadius.circular(5),
                   ),
                   elevation: 0,
                 ),
                 child: Text(
-                  'CONNECT DEVICE', 
-                  style: TextStyle(fontSize: 18, color: config.primaryColor, fontWeight: FontWeight.bold),
+                  'CONNECT DEVICE',
+                  style: TextStyle(
+                    fontSize: 18,
+                    color: config.primaryColor,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
             ),
           ],
         ),
       ),
-      floatingActionButton: viewModel.requiresGuid
-          ? Padding(
-            padding: const EdgeInsets.only(right: 8.0, bottom: 8.0),
-            child: FloatingActionButton.extended(
-                onPressed: () async {
-                  final result = await Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => const QRScannerView(),
-                    ),
-                  );
-                  if (result != null && result is String) {
-                    viewModel.handleQrResult(result);
-                  }
-                },
-                icon: const Icon(
-                  Icons.qr_code_2,
-                  color: Colors.black, 
-                ),
-                label: const Text(
-                  'SCAN QR', 
-                  style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold), 
-                ), 
-                backgroundColor: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(5),
-                  side: const BorderSide(color: Colors.black12, width: 1),
-                ),
-                elevation: 4,
-              ),
-          )
+      // FAB untuk scan QR (hanya tampil kalau butuh GUID)
+      floatingActionButton: vm.needsGuid
+          ? _buildQrScanButton(context, vm)
           : null,
     );
   }
 
-  List<Widget> _buildHomeAutomationFields(
-      UniqueCredentialViewModel viewModel,
-      Color hintColor,
-      Color sectionColor,
-      Color textColor) {
+  // Button QR scanner
+  Widget _buildQrScanButton(
+    BuildContext context,
+    UniqueCredentialViewModel vm,
+  ) {
+    return Padding(
+      padding: const EdgeInsets.only(right: 8.0, bottom: 8.0),
+      child: FloatingActionButton.extended(
+        onPressed: () async {
+          final result = await Navigator.of(
+            context,
+          ).push(MaterialPageRoute(builder: (_) => const QRScannerView()));
+          if (result != null && result is String) {
+            vm.handleQrScan(result);
+          }
+        },
+        icon: const Icon(Icons.qr_code_2, color: Colors.black),
+        label: const Text(
+          'SCAN QR',
+          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+        ),
+        backgroundColor: Colors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(5),
+          side: const BorderSide(color: Colors.black12, width: 1),
+        ),
+        elevation: 4,
+      ),
+    );
+  }
 
-    const IconData label = Icons.label;
-    const IconData keyIcon = Icons.vpn_key_outlined;
-
+  // Field untuk Home Automation (punya banyak input untuk tiap device)
+  List<Widget> _buildHomeFields(
+    UniqueCredentialViewModel vm,
+    Color hintColor,
+    IWKConfig config,
+  ) {
     return [
-      // --- Queues Settings (Outside Section Box) ---
+      // Section header
       const Text(
         'Queues Settings',
         style: TextStyle(
@@ -123,25 +132,23 @@ if (config.name == 'Home Automation')
       ),
       const SizedBox(height: 15),
 
-      // Queue Field 1
+      // Queue topics
       BorderTextField(
-        controller: viewModel.keywordController,
-        icon: label, 
+        controller: vm.queueTopic1,
+        icon: Icons.label,
         labelText: 'Queue Topic 1',
         color: hintColor,
       ),
       const SizedBox(height: 15),
-
-      // Queue Field 2
       BorderTextField(
-        controller: viewModel.guidController, // Using GUID controller for the second field for simplicity
-        icon: label, 
+        controller: vm.queueTopic2,
+        icon: Icons.label,
         labelText: 'Queue Topic 2',
         color: hintColor,
       ),
       const SizedBox(height: 30),
 
-      // --- Device Settings (Groups) ---
+      // Section device settings
       const Text(
         'Device Settings',
         style: TextStyle(
@@ -152,113 +159,110 @@ if (config.name == 'Home Automation')
       ),
       const SizedBox(height: 15),
 
-      // Saklar Group
+      // Saklar device
       CredentialGroup(
         title: 'Saklar',
-        sectionColor: sectionColor,
-        textColor: textColor,
+        sectionColor: config.backgroundColor,
+        textColor: config.primaryColor,
         children: [
           BorderTextField(
-            controller: TextEditingController(), // Placeholder controller
-            icon: keyIcon, 
+            controller: vm.saklarGuid,
+            icon: Icons.vpn_key_outlined,
             labelText: 'Saklar GUID',
             color: hintColor,
           ),
           const SizedBox(height: 15),
           BorderTextField(
-            controller: TextEditingController(), // Placeholder controller
-            icon: label, 
-            labelText: 'Saklar Topic',
+            controller: vm.saklarName, // Changed from saklarTopic
+            icon: Icons.label,
+            labelText: 'Saklar Name', // Changed from 'Saklar Topic'
             color: hintColor,
           ),
         ],
       ),
       const SizedBox(height: 20),
 
-      // Steker Group
+      // Steker device
       CredentialGroup(
         title: 'Steker',
-        sectionColor: sectionColor,
-        textColor: textColor,
+        sectionColor: config.backgroundColor,
+        textColor: config.primaryColor,
         children: [
           BorderTextField(
-            controller: TextEditingController(), // Placeholder controller
-            icon: keyIcon, 
+            controller: vm.stekerGuid,
+            icon: Icons.vpn_key_outlined,
             labelText: 'Steker GUID',
             color: hintColor,
           ),
           const SizedBox(height: 15),
           BorderTextField(
-            controller: TextEditingController(), // Placeholder controller
-            icon: label, 
-            labelText: 'Steker Topic',
+            controller: vm.stekerName, // Changed from stekerTopic
+            icon: Icons.label,
+            labelText: 'Steker Name', // Changed from 'Steker Topic'
             color: hintColor,
           ),
         ],
       ),
       const SizedBox(height: 20),
-      
-      // Power Meter Group
+
+      // Power Meter device
       CredentialGroup(
         title: 'Power Meter',
-        sectionColor: sectionColor,
-        textColor: textColor,
+        sectionColor: config.backgroundColor,
+        textColor: config.primaryColor,
         children: [
           BorderTextField(
-            controller: TextEditingController(), // Placeholder controller
-            icon: keyIcon, 
+            controller: vm.meterGuid,
+            icon: Icons.vpn_key_outlined,
             labelText: 'Meter GUID',
             color: hintColor,
           ),
           const SizedBox(height: 15),
           BorderTextField(
-            controller: TextEditingController(), // Placeholder controller
-            icon: label, 
-            labelText: 'Meter Topic',
+            controller: vm.meterName, // Changed from meterTopic
+            icon: Icons.label,
+            labelText: 'Meter Name', // Changed from 'Meter Topic'
             color: hintColor,
           ),
         ],
       ),
-      const SizedBox(height: 40),
     ];
   }
 
-  // Layout for all other modules (simple GUID/Keyword inputs)
-  List<Widget> _buildDefaultFields(
-      UniqueCredentialViewModel viewModel, Color hintColor, Color textColor) {
+  // Field standar untuk module lain (cuma GUID dan Topic)
+  List<Widget> _buildStandardFields(
+    UniqueCredentialViewModel vm,
+    Color hintColor,
+    IWKConfig config,
+  ) {
     return [
       Text(
         'Device Settings',
         style: TextStyle(
           fontSize: 18,
           fontWeight: FontWeight.bold,
-          color: textColor,
+          color: config.primaryColor,
         ),
       ),
       const SizedBox(height: 15),
-      
-      // Keyword/Topic Field
       BorderTextField(
-        controller: viewModel.keywordController,
-        icon: Icons.label, 
+        controller: vm.keywordController,
+        icon: Icons.label,
         labelText: 'Keyword/Topic',
         color: hintColor,
       ),
       const SizedBox(height: 15),
-
-      // GUID Field
       BorderTextField(
-        controller: viewModel.guidController,
+        controller: vm.guidController,
         icon: Icons.vpn_key,
         labelText: 'GUID',
         color: hintColor,
       ),
-      const SizedBox(height: 40),
     ];
   }
 
-
   @override
-  UniqueCredentialViewModel viewModelBuilder(BuildContext context) =>
-      UniqueCredentialViewModel();
+  UniqueCredentialViewModel viewModelBuilder(BuildContext context) {
+    return UniqueCredentialViewModel();
+  }
 }

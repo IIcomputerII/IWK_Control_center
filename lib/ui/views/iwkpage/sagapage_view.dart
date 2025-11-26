@@ -3,6 +3,7 @@ import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 import '../../../viewmodels/iwkpage/sagapage_view_modal.dart';
 import '../../../app/app.locator.dart';
+import 'dart:convert';
 
 class SagaPageView extends StackedView<SagaPageViewModel> {
   final String? topic;
@@ -31,7 +32,12 @@ class SagaPageView extends StackedView<SagaPageViewModel> {
         backgroundColor: Colors.purple.shade700,
       ),
       body: viewModel.logs.isEmpty
-          ? const Center(child: Text('Waiting for RFID scan...'))
+          ? const Center(
+              child: Text(
+                'Waiting for RFID scan...',
+                style: TextStyle(fontSize: 16, color: Colors.black54),
+              ),
+            )
           : ListView.builder(
               padding: const EdgeInsets.all(16),
               itemCount: viewModel.logs.length,
@@ -47,67 +53,121 @@ class SagaPageView extends StackedView<SagaPageViewModel> {
 
     return Card(
       margin: const EdgeInsets.only(bottom: 16),
-      elevation: 3,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+      elevation: 4,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(8),
+        side: BorderSide(color: Colors.grey.shade300, width: 1),
+      ),
       child: Padding(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.all(24),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // RFID Logo
+            // RFID Logo Header
             Center(
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Icon(
                     Icons.credit_card,
-                    size: 50,
+                    size: 48,
                     color: Colors.orange.shade700,
                   ),
-                  const SizedBox(width: 10),
-                  const Text(
+                  const SizedBox(width: 12),
+                  Text(
                     'RFID',
                     style: TextStyle(
-                      fontSize: 32,
+                      fontSize: 36,
                       fontWeight: FontWeight.bold,
-                      color: Colors.orange,
+                      color: Colors.orange.shade700,
                     ),
                   ),
                 ],
               ),
             ),
             const SizedBox(height: 24),
+            const Divider(thickness: 1),
+
+            // Nama Lengkap
             _buildInfoRow(
               'Nama Lengkap',
               cardData['nama'] ?? 'SMART CARD SAGA',
             ),
             const Divider(),
+
+            // Mac
             _buildInfoRow('Mac', cardData['mac'] ?? '-'),
             const Divider(),
+
+            // Jam
             _buildInfoRow('Jam', cardData['jam'] ?? '-'),
             const Divider(),
+
+            // Tanggal
             _buildInfoRow('Tanggal', cardData['tanggal'] ?? '-'),
             const Divider(),
+
+            // Sekolah
             _buildInfoRow('Sekolah', cardData['sekolah'] ?? 'PPTIK ITB'),
             const Divider(),
+
+            // Id
             _buildInfoRow('Id', cardData['id'] ?? '-'),
-            const SizedBox(height: 20),
-            // Refresh Button
-            Center(
-              child: ElevatedButton.icon(
-                onPressed: () {
-                  // Refresh action
-                },
-                icon: const Icon(Icons.refresh),
-                label: const Text('Refresh'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.orange,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 32,
-                    vertical: 12,
+
+            const SizedBox(height: 24),
+
+            // Buttons Row
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Expanded(
+                  child: ElevatedButton.icon(
+                    onPressed: () {
+                      // Refresh action - could trigger re-read or update
+                    },
+                    icon: const Icon(Icons.refresh, color: Colors.white),
+                    label: const Text(
+                      'Refresh',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.orange.shade600,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 24,
+                        vertical: 12,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                    ),
                   ),
                 ),
-              ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: ElevatedButton.icon(
+                    onPressed: () {
+                      // Reset action - navigate back
+                      locator<NavigationService>().back();
+                      locator<NavigationService>().back();
+                    },
+                    icon: const Icon(Icons.refresh, color: Colors.white),
+                    label: const Text(
+                      'Reset',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red.shade600,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 24,
+                        vertical: 12,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
           ],
         ),
@@ -140,11 +200,33 @@ class SagaPageView extends StackedView<SagaPageViewModel> {
   }
 
   Map<String, String> _parseRFIDData(String logData) {
-    // Parse RFID data from log
-    // Expected JSON format or key-value pairs
     final result = <String, String>{};
 
-    // Try to extract data using regex
+    try {
+      // Try to parse as JSON first
+      final jsonData = jsonDecode(logData);
+      if (jsonData is Map<String, dynamic>) {
+        result['nama'] =
+            jsonData['nama']?.toString() ?? jsonData['name']?.toString() ?? '';
+        result['mac'] = jsonData['mac']?.toString() ?? '';
+        result['jam'] =
+            jsonData['jam']?.toString() ?? jsonData['time']?.toString() ?? '';
+        result['tanggal'] =
+            jsonData['tanggal']?.toString() ??
+            jsonData['date']?.toString() ??
+            '';
+        result['sekolah'] =
+            jsonData['sekolah']?.toString() ??
+            jsonData['school']?.toString() ??
+            '';
+        result['id'] = jsonData['id']?.toString() ?? '';
+        return result;
+      }
+    } catch (e) {
+      // If JSON parsing fails, fall back to regex
+    }
+
+    // Regex-based parsing as fallback
     final macMatch = RegExp(
       r'mac["\s:]+([a-f0-9:]+)',
       caseSensitive: false,
@@ -159,6 +241,24 @@ class SagaPageView extends StackedView<SagaPageViewModel> {
     ).firstMatch(logData.toLowerCase());
     if (idMatch != null) {
       result['id'] = idMatch.group(1) ?? '';
+    }
+
+    // Try to extract nama/name
+    final namaMatch = RegExp(
+      r'(?:nama|name)["\s:]+([^,"}\n]+)',
+      caseSensitive: false,
+    ).firstMatch(logData);
+    if (namaMatch != null) {
+      result['nama'] = namaMatch.group(1)?.trim() ?? '';
+    }
+
+    // Try to extract sekolah/school
+    final sekolahMatch = RegExp(
+      r'(?:sekolah|school)["\s:]+([^,"}\n]+)',
+      caseSensitive: false,
+    ).firstMatch(logData);
+    if (sekolahMatch != null) {
+      result['sekolah'] = sekolahMatch.group(1)?.trim() ?? '';
     }
 
     // Extract timestamp from log prefix [HH:MM:SS]

@@ -9,6 +9,10 @@ class HomePageViewModel extends BaseViewModel {
   String _data = 'Waiting for data...';
   String get data => _data;
 
+  // Device Name (Topic)
+  String _deviceName = 'Home Automation';
+  String get deviceName => _deviceName;
+
   // Log Feed
   final List<String> _logs = [];
   List<String> get logs => _logs;
@@ -19,6 +23,13 @@ class HomePageViewModel extends BaseViewModel {
 
   bool _isDeviceOnline = false;
   bool get isDeviceOnline => _isDeviceOnline;
+
+  // Toggle States
+  bool _isSaklarOn = false;
+  bool get isSaklarOn => _isSaklarOn;
+
+  bool _isStekerOn = false;
+  bool get isStekerOn => _isStekerOn;
 
   // Last Update
   DateTime? _lastUpdate;
@@ -32,14 +43,17 @@ class HomePageViewModel extends BaseViewModel {
   void init(String? guid, String? topic) async {
     if (guid == null) return;
 
-    final String safeTopic = topic?.isNotEmpty == true ? topic! : 'home_auto';
+    // Use topic as Device Name
+    if (topic != null && topic.isNotEmpty) {
+      _deviceName = topic;
+    }
 
     _isBrokerConnected = true;
     notifyListeners();
 
     try {
-      // Subscribe to sensor queue
-      _sensorConsumer = await _brokerService.subscribe('$safeTopic.sensor');
+      // Subscribe to sensor queue: [DeviceName].sensor
+      _sensorConsumer = await _brokerService.subscribe('$_deviceName.sensor');
       _sensorConsumer!.listen((AmqpMessage message) {
         _data = message.payloadAsString;
         _lastUpdate = DateTime.now();
@@ -47,8 +61,8 @@ class HomePageViewModel extends BaseViewModel {
         notifyListeners();
       });
 
-      // Subscribe to log queue
-      _logConsumer = await _brokerService.subscribe('$safeTopic.log');
+      // Subscribe to log queue: [DeviceName].log
+      _logConsumer = await _brokerService.subscribe('$_deviceName.log');
       _logConsumer!.listen((AmqpMessage message) {
         _logs.insert(
           0,
@@ -60,6 +74,40 @@ class HomePageViewModel extends BaseViewModel {
     } catch (e) {
       _data = 'Error subscribing: $e';
       _isBrokerConnected = false;
+      notifyListeners();
+    }
+  }
+
+  // Toggle Saklar
+  Future<void> toggleSaklar() async {
+    _isSaklarOn = !_isSaklarOn;
+    notifyListeners();
+
+    try {
+      // Publish to [DeviceName].saklar
+      // Payload: 1 for ON, 0 for OFF
+      final payload = _isSaklarOn ? '1' : '0';
+      await _brokerService.publish('$_deviceName.saklar', payload);
+    } catch (e) {
+      // Revert state on error
+      _isSaklarOn = !_isSaklarOn;
+      notifyListeners();
+    }
+  }
+
+  // Toggle Steker
+  Future<void> toggleSteker() async {
+    _isStekerOn = !_isStekerOn;
+    notifyListeners();
+
+    try {
+      // Publish to [DeviceName].steker
+      // Payload: 1 for ON, 0 for OFF
+      final payload = _isStekerOn ? '1' : '0';
+      await _brokerService.publish('$_deviceName.steker', payload);
+    } catch (e) {
+      // Revert state on error
+      _isStekerOn = !_isStekerOn;
       notifyListeners();
     }
   }

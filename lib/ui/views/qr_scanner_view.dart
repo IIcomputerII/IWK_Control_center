@@ -10,11 +10,28 @@ class QRScannerView extends StatefulWidget {
 
 class _QRScannerViewState extends State<QRScannerView> {
   final MobileScannerController cameraController = MobileScannerController();
+  bool _hasScanned = false; // Prevent multiple scans
 
   @override
   void dispose() {
     cameraController.dispose();
     super.dispose();
+  }
+
+  void _handleBarcode(String code) {
+    if (_hasScanned) return; // Prevent duplicate scans
+
+    _hasScanned = true;
+
+    // Dispose camera before navigating
+    cameraController.stop();
+
+    // Navigate back with result after a short delay to ensure camera cleanup
+    Future.delayed(const Duration(milliseconds: 100), () {
+      if (mounted) {
+        Navigator.of(context).pop(code);
+      }
+    });
   }
 
   @override
@@ -40,12 +57,13 @@ class _QRScannerViewState extends State<QRScannerView> {
           MobileScanner(
             controller: cameraController,
             onDetect: (capture) {
+              if (_hasScanned) return; // Extra safety check
+
               final List<Barcode> barcodes = capture.barcodes;
               for (final barcode in barcodes) {
                 final String? code = barcode.rawValue;
-                if (code != null) {
-                  // Return the scanned code and close
-                  Navigator.of(context).pop(code);
+                if (code != null && code.isNotEmpty) {
+                  _handleBarcode(code);
                   return;
                 }
               }
