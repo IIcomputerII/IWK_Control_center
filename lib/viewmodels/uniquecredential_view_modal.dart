@@ -62,7 +62,7 @@ class UniqueCredentialViewModel extends BaseViewModel {
         _navigationService.navigateToWaterPageView(guid: guid, topic: topic);
         break;
       case 'Smart Saga':
-        _navigationService.navigateToSagaPageView(guid: guid, topic: topic);
+        _navigationService.navigateToSagaPageView(topic: topic);
         break;
       case 'Environmental Sensor':
         _navigationService.navigateToEnvPageView(guid: guid, topic: topic);

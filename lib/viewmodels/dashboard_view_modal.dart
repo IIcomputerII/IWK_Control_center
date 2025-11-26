@@ -26,7 +26,7 @@ class DashboardViewModel extends BaseViewModel {
       image: 'assets/saga/RFIDkit.png',
       primaryColor: Colors.red,
       backgroundColor: Colors.red.shade50,
-      requiresGuid: false,
+      requiresGuid: true,
       route: Routes.sagaPageView,
     ),
     IWKConfig(
@@ -57,17 +57,9 @@ class DashboardViewModel extends BaseViewModel {
 
   void selectModule(IWKConfig config) {
     if (config.requiresGuid) {
-      // Navigate to the screen that collects the GUID
       _navigationService.navigateToUniqueCredentialView(config: config);
     } else {
-      switch (config.name) {
-        case 'Smart Saga':
-          _navigationService.navigateToSagaPageView(guid: null, topic: null);
-          break;
-        default:
-          _navigationService.navigateTo(config.route);
-          break;
-      }
+      _navigationService.navigateTo(config.route);
     }
   }
   

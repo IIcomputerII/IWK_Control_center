@@ -42,8 +42,10 @@ class UniqueCredentialView extends StackedView<UniqueCredentialViewModel> {
           children: [
             Infocard(config: config, width: screenWidth),
             const SizedBox(height: 30),
-if (config.name == 'Home Automation') 
+            if (config.name == 'Home Automation') 
               ..._buildHomeAutomationFields(viewModel, hintColor, config.backgroundColor, config.primaryColor)
+            else if (config.name == 'Smart Saga')
+              ..._buildSmartSagaFields(viewModel, hintColor, config.primaryColor)
             else 
               ..._buildDefaultFields(viewModel, hintColor, config.primaryColor),
 
@@ -220,6 +222,30 @@ if (config.name == 'Home Automation')
         ],
       ),
       const SizedBox(height: 40),
+    ];
+  }
+
+  List<Widget> _buildSmartSagaFields(
+      UniqueCredentialViewModel viewModel, Color hintColor, Color textColor) {
+    return [
+      Text(
+        'Device Settings',
+        style: TextStyle(
+          fontSize: 18,
+          fontWeight: FontWeight.bold,
+          color: textColor,
+        ),
+      ),
+      const SizedBox(height: 15),
+      
+      // Keyword/Topic Field (The only field for Smart Saga)
+      BorderTextField(
+        controller: viewModel.keywordController,
+        icon: Icons.label, 
+        labelText: 'Keyword/Topic',
+        color: hintColor,
+      ),
+      const SizedBox(height: 40), // Increased spacing before the button
     ];
   }
 

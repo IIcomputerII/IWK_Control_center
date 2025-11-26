@@ -24,7 +24,7 @@ class ChooseIwkViewModel extends BaseViewModel {
       image: 'assets/saga/RFIDkit.png',
       primaryColor: Colors.green,
       backgroundColor: Colors.green,
-      requiresGuid: false,
+      requiresGuid: true,
       route: Routes.sagaPageView,
     ),
     IWKConfig(
