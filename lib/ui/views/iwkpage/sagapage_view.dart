@@ -22,8 +22,6 @@ class SagaPageView extends StackedView<SagaPageViewModel> {
     SagaPageViewModel viewModel,
     Widget? child,
   ) {
-    // Determine the data to display: the latest log if available
-    // Note: logs are inserted at index 0, so .first is the newest
     final String? latestLogData = viewModel.logs.isNotEmpty
         ? viewModel.logs.first
         : null;
@@ -31,37 +29,27 @@ class SagaPageView extends StackedView<SagaPageViewModel> {
         ? _parseRFIDData(latestLogData)
         : {};
 
-    // Check if we have data to populate the fields
     final bool hasData = cardData.isNotEmpty;
 
     return Scaffold(
-      backgroundColor:
-          Colors.white, // Changed background to white to match images
+      backgroundColor:Colors.white,
       appBar: AppBar(
         title: const Text(
           'Smartcard Saga',
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
         centerTitle: false,
-        backgroundColor: Colors.white,
+        backgroundColor: Colors.red,
         foregroundColor: Colors.black,
         elevation: 0,
-        actions: [
-          // The black dot from the image
-          const Padding(
-            padding: EdgeInsets.only(right: 16.0),
-            child: Icon(Icons.circle, size: 10.0),
-          ),
-        ],
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(horizontal: 20.0),
+        padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 16.0),
         child: _buildProfileCard(context, cardData, hasData),
       ),
     );
   }
 
-  // Widget to build the profile-style card
   Widget _buildProfileCard(
     BuildContext context,
     Map<String, String> cardData,
@@ -69,15 +57,15 @@ class SagaPageView extends StackedView<SagaPageViewModel> {
   ) {
     return Column(
       children: [
-        // Circular Image Placeholder
-        Container(
-          width: 120,
-          height: 120,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: Colors.grey.shade300,
+        CircleAvatar(
+          radius: 100, // Reduced from 40
+          backgroundColor: Colors.white,
+          child: Image.asset(
+            'assets/saga/RFIDkit.png',
+            width: 200, // Reduced from 70
+            height: 200, // Reduced from 70
+            fit: BoxFit.contain,
           ),
-          margin: const EdgeInsets.only(top: 20, bottom: 40),
         ),
 
         // Information Fields
@@ -172,7 +160,7 @@ class SagaPageView extends StackedView<SagaPageViewModel> {
 
     // Placeholder data for demonstration
     result.putIfAbsent('nama', () => 'Dummy Full Name');
-    result.putIfAbsent('sekolah', () => 'PPTIK ITB');
+    result.putIfAbsent('sekolah', () => 'Dummy School');
 
     return result;
   }

@@ -82,8 +82,7 @@ class UniqueCredentialView extends StackedView<UniqueCredentialViewModel> {
           ],
         ),
       ),
-      // FAB untuk scan QR (hanya tampil kalau butuh GUID)
-      floatingActionButton: viewModel.needsGuid
+      floatingActionButton: viewModel.needsGuid && config.name != 'Smart Saga'
           ? _buildQrScanButton(context, viewModel)
           : null,
     );
@@ -232,6 +231,7 @@ class UniqueCredentialView extends StackedView<UniqueCredentialViewModel> {
           ),
         ],
       ),
+      SizedBox(height: 40), // Spacing before the button
     ];
   }
 
@@ -293,6 +293,7 @@ class UniqueCredentialView extends StackedView<UniqueCredentialViewModel> {
         labelText: 'GUID',
         color: hintColor,
       ),
+      SizedBox(height: 40), // Spacing before the button
     ];
   }
 
