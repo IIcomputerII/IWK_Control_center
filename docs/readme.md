@@ -5,6 +5,8 @@
 
 Gw tulis urut dari nol sampai selesai, termasuk state internal, siapa ngapain, dan edge case.
 
+flutter emulators --launch Medium_Phone_API_36.1
+
 ---
 
 ## Alur besar (peta jalannya dulu biar kebayang)
