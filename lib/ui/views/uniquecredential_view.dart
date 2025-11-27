@@ -20,7 +20,7 @@ class UniqueCredentialView extends StackedView<UniqueCredentialViewModel> {
   @override
   Widget builder(
     BuildContext context,
-    UniqueCredentialViewModel vm,
+    UniqueCredentialViewModel viewModel,
     Widget? child,
   ) {
     final screenWidth = MediaQuery.of(context).size.width;
@@ -42,11 +42,10 @@ class UniqueCredentialView extends StackedView<UniqueCredentialViewModel> {
             Infocard(config: config, width: screenWidth),
             const SizedBox(height: 30),
             if (config.name == 'Home Automation')
-              ..._buildHomeAutomationFields(
+              ..._buildHomeFields(
                 viewModel,
                 hintColor,
-                config.backgroundColor,
-                config.primaryColor,
+                config,
               )
             else if (config.name == 'Smart Saga')
               ..._buildSmartSagaFields(
@@ -62,7 +61,7 @@ class UniqueCredentialView extends StackedView<UniqueCredentialViewModel> {
               width: double.infinity,
               height: 55,
               child: ElevatedButton(
-                onPressed: vm.submitAndNavigate,
+                onPressed: viewModel.submitAndNavigate,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: config.backgroundColor,
                   shape: RoundedRectangleBorder(
@@ -84,8 +83,8 @@ class UniqueCredentialView extends StackedView<UniqueCredentialViewModel> {
         ),
       ),
       // FAB untuk scan QR (hanya tampil kalau butuh GUID)
-      floatingActionButton: vm.needsGuid
-          ? _buildQrScanButton(context, vm)
+      floatingActionButton: viewModel.needsGuid
+          ? _buildQrScanButton(context, viewModel)
           : null,
     );
   }
@@ -289,7 +288,7 @@ class UniqueCredentialView extends StackedView<UniqueCredentialViewModel> {
       ),
       const SizedBox(height: 15),
       BorderTextField(
-        controller: vm.guidController,
+        controller: viewModel.guidController,
         icon: Icons.vpn_key,
         labelText: 'GUID',
         color: hintColor,

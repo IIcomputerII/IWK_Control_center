@@ -95,7 +95,7 @@ class UniqueCredentialViewModel extends BaseViewModel {
     }
 
     // Validasi - kalau butuh GUID tapi kosong, jangan navigate
-    if (needsGuid && guid.isEmpty) {
+    if (needsGuid && guid.isEmpty && moduleName != 'Smart Saga') {
       debugPrint('❌ Navigation blocked: GUID is empty');
       return;
     }
@@ -108,7 +108,7 @@ class UniqueCredentialViewModel extends BaseViewModel {
         _nav.navigateToWaterPageView(guid: guid, topic: topic);
         break;
       case 'Smart Saga':
-        _navigationService.navigateToSagaPageView(topic: topic);
+        _nav.navigateToSagaPageView(topic: topic);
         break;
       case 'Environmental Sensor':
         _nav.navigateToEnvPageView(guid: guid, topic: topic);
