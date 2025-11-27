@@ -41,14 +41,21 @@ class UniqueCredentialView extends StackedView<UniqueCredentialViewModel> {
           children: [
             Infocard(config: config, width: screenWidth),
             const SizedBox(height: 30),
-
-            // Tampilkan field sesuai module type
             if (config.name == 'Home Automation')
-              ..._buildHomeFields(vm, hintColor, config)
+              ..._buildHomeAutomationFields(
+                viewModel,
+                hintColor,
+                config.backgroundColor,
+                config.primaryColor,
+              )
+            else if (config.name == 'Smart Saga')
+              ..._buildSmartSagaFields(
+                viewModel,
+                hintColor,
+                config.primaryColor,
+              )
             else
-              ..._buildStandardFields(vm, hintColor, config),
-
-            const SizedBox(height: 20),
+              ..._buildDefaultFields(viewModel, hintColor, config.primaryColor),
 
             // Tombol submit
             SizedBox(
@@ -229,11 +236,10 @@ class UniqueCredentialView extends StackedView<UniqueCredentialViewModel> {
     ];
   }
 
-  // Field standar untuk module lain (cuma GUID dan Topic)
-  List<Widget> _buildStandardFields(
-    UniqueCredentialViewModel vm,
+  List<Widget> _buildSmartSagaFields(
+    UniqueCredentialViewModel viewModel,
     Color hintColor,
-    IWKConfig config,
+    Color textColor,
   ) {
     return [
       Text(
@@ -241,12 +247,42 @@ class UniqueCredentialView extends StackedView<UniqueCredentialViewModel> {
         style: TextStyle(
           fontSize: 18,
           fontWeight: FontWeight.bold,
-          color: config.primaryColor,
+          color: textColor,
         ),
       ),
       const SizedBox(height: 15),
+
+      // Keyword/Topic Field (The only field for Smart Saga)
       BorderTextField(
-        controller: vm.keywordController,
+        controller: viewModel.keywordController,
+        icon: Icons.label,
+        labelText: 'Keyword/Topic',
+        color: hintColor,
+      ),
+      const SizedBox(height: 40), // Increased spacing before the button
+    ];
+  }
+
+  // Layout for all other modules (simple GUID/Keyword inputs)
+  List<Widget> _buildDefaultFields(
+    UniqueCredentialViewModel viewModel,
+    Color hintColor,
+    Color textColor,
+  ) {
+    return [
+      Text(
+        'Device Settings',
+        style: TextStyle(
+          fontSize: 18,
+          fontWeight: FontWeight.bold,
+          color: textColor,
+        ),
+      ),
+      const SizedBox(height: 15),
+
+      // Keyword/Topic Field
+      BorderTextField(
+        controller: viewModel.keywordController,
         icon: Icons.label,
         labelText: 'Keyword/Topic',
         color: hintColor,
