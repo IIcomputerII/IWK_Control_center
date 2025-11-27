@@ -30,35 +30,57 @@ class EnvPageViewModel extends BaseViewModel {
   Consumer? _logConsumer;
 
   void init(String? guid, String? topic) async {
-    if (guid == null) return;
+    if (guid == null) {
+      print('[ENV] Init called with null GUID, skipping subscription');
+      return;
+    }
 
     final String safeTopic = topic?.isNotEmpty == true ? topic! : 'environment';
+    print('[ENV] Initializing with GUID: $guid, Topic: $safeTopic');
 
     _isBrokerConnected = true;
     notifyListeners();
 
     try {
       // Subscribe to sensor queue
-      _sensorConsumer = await _brokerService.subscribe('$safeTopic.sensor');
+      final sensorTopic = '$safeTopic.sensor';
+      print('[ENV] Subscribing to sensor topic: $sensorTopic');
+      _sensorConsumer = await _brokerService.subscribe(sensorTopic);
+      print('[ENV] Successfully subscribed to: $sensorTopic');
+
       _sensorConsumer!.listen((AmqpMessage message) {
-        _data = message.payloadAsString;
+        final payload = message.payloadAsString;
+        print('[ENV] Received SENSOR message: $payload');
+
+        _data = payload;
         _lastUpdate = DateTime.now();
         _isDeviceOnline = true;
         notifyListeners();
       });
 
       // Subscribe to log queue
-      _logConsumer = await _brokerService.subscribe('$safeTopic.log');
+      final logTopic = '$safeTopic.log';
+      print('[ENV] Subscribing to log topic: $logTopic');
+      _logConsumer = await _brokerService.subscribe(logTopic);
+      print('[ENV] Successfully subscribed to: $logTopic');
+
       _logConsumer!.listen((AmqpMessage message) {
+        final payload = message.payloadAsString;
+        print('[ENV] Received LOG message: $payload');
+
         _logs.insert(
           0,
-          '[${DateTime.now().toString().split(' ')[1].split('.')[0]}] ${message.payloadAsString}',
+          '[${DateTime.now().toString().split(' ')[1].split('.')[0]}] $payload',
         );
         if (_logs.length > 50) _logs.removeLast();
         notifyListeners();
       });
+
+      print('[ENV] Initialization complete - listening for messages');
     } catch (e) {
-      _data = 'Error subscribing: $e';
+      final errorMsg = 'Error subscribing to Environmental topics: $e';
+      print('[ENV ERROR] $errorMsg');
+      _data = errorMsg;
       _isBrokerConnected = false;
       notifyListeners();
     }
@@ -66,6 +88,7 @@ class EnvPageViewModel extends BaseViewModel {
 
   @override
   void dispose() {
+    print('[ENV] Disposing consumers');
     _sensorConsumer?.cancel();
     _logConsumer?.cancel();
     super.dispose();

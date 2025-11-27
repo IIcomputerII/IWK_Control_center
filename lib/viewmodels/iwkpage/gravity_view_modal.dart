@@ -30,35 +30,57 @@ class GravityViewModel extends BaseViewModel {
   Consumer? _logConsumer;
 
   void init(String? guid, String? topic) async {
-    if (guid == null) return;
+    if (guid == null) {
+      print('[GRAVITY] Init called with null GUID, skipping subscription');
+      return;
+    }
 
     final String safeTopic = topic?.isNotEmpty == true ? topic! : 'cog';
+    print('[GRAVITY] Initializing with GUID: $guid, Topic: $safeTopic');
 
     _isBrokerConnected = true;
     notifyListeners();
 
     try {
       // Subscribe to sensor queue
-      _sensorConsumer = await _brokerService.subscribe('$safeTopic.sensor');
+      final sensorTopic = '$safeTopic.sensor';
+      print('[GRAVITY] Subscribing to sensor topic: $sensorTopic');
+      _sensorConsumer = await _brokerService.subscribe(sensorTopic);
+      print('[GRAVITY] Successfully subscribed to: $sensorTopic');
+
       _sensorConsumer!.listen((AmqpMessage message) {
-        _data = message.payloadAsString;
+        final payload = message.payloadAsString;
+        print('[GRAVITY] Received SENSOR message: $payload');
+
+        _data = payload;
         _lastUpdate = DateTime.now();
         _isDeviceOnline = true;
         notifyListeners();
       });
 
       // Subscribe to log queue
-      _logConsumer = await _brokerService.subscribe('$safeTopic.log');
+      final logTopic = '$safeTopic.log';
+      print('[GRAVITY] Subscribing to log topic: $logTopic');
+      _logConsumer = await _brokerService.subscribe(logTopic);
+      print('[GRAVITY] Successfully subscribed to: $logTopic');
+
       _logConsumer!.listen((AmqpMessage message) {
+        final payload = message.payloadAsString;
+        print('[GRAVITY] Received LOG message: $payload');
+
         _logs.insert(
           0,
-          '[${DateTime.now().toString().split(' ')[1].split('.')[0]}] ${message.payloadAsString}',
+          '[${DateTime.now().toString().split(' ')[1].split('.')[0]}] $payload',
         );
         if (_logs.length > 50) _logs.removeLast();
         notifyListeners();
       });
+
+      print('[GRAVITY] Initialization complete - listening for messages');
     } catch (e) {
-      _data = 'Error subscribing: $e';
+      final errorMsg = 'Error subscribing to Gravity topics: $e';
+      print('[GRAVITY ERROR] $errorMsg');
+      _data = errorMsg;
       _isBrokerConnected = false;
       notifyListeners();
     }
@@ -66,6 +88,7 @@ class GravityViewModel extends BaseViewModel {
 
   @override
   void dispose() {
+    print('[GRAVITY] Disposing consumers');
     _sensorConsumer?.cancel();
     _logConsumer?.cancel();
     super.dispose();

@@ -23,8 +23,9 @@ class SagaPageView extends StackedView<SagaPageViewModel> {
     Widget? child,
   ) {
     // Determine the data to display: the latest log if available
+    // Note: logs are inserted at index 0, so .first is the newest
     final String? latestLogData = viewModel.logs.isNotEmpty
-        ? viewModel.logs.last
+        ? viewModel.logs.first
         : null;
     final Map<String, String> cardData = latestLogData != null
         ? _parseRFIDData(latestLogData)

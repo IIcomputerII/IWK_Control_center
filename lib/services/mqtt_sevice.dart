@@ -48,7 +48,7 @@ class MQTTService with ListenableServiceMixin {
       _status = 'error: $e';
       notifyListeners();
       _scheduleReconnect();
-      rethrow; // Rethrow for the initial caller to know
+      rethrow;
     }
   }
 
@@ -60,11 +60,9 @@ class MQTTService with ListenableServiceMixin {
 
     _reconnectTimer?.cancel();
     _reconnectTimer = Timer(const Duration(seconds: 5), () async {
-      print('Attempting to reconnect...');
       try {
         await _attemptConnection();
       } catch (_) {
-        // Ignore error on retry, just schedule next
         _scheduleReconnect();
       }
     });
@@ -79,17 +77,55 @@ class MQTTService with ListenableServiceMixin {
     notifyListeners();
   }
 
-  // Subscribe to a queue
+  // Subscribe to queue and bind to MQTT exchange
   Future<Consumer> subscribe(String queueName) async {
-    if (_channel == null) throw Exception('Not connected');
-    Queue queue = await _channel!.queue(queueName);
-    return queue.consume();
+    if (_channel == null) {
+      throw Exception(
+        'Cannot subscribe to $queueName: Not connected to MQTT broker',
+      );
+    }
+
+    try {
+      // Declare queue
+      Queue queue = await _channel!.queue(
+        queueName,
+        passive: false,
+        durable: false,
+      );
+
+      // Convert topic name for AMQP routing: "topic/name" → "topic.name"
+      String routingKey = queueName.replaceAll('/', '.');
+
+      // Bind queue to amq.topic exchange (where MQTT messages arrive)
+      Exchange exchange = await _channel!.exchange(
+        'amq.topic',
+        ExchangeType.TOPIC,
+        passive: true,
+      );
+      queue.bind(exchange, routingKey);
+
+      Consumer consumer = await queue.consume();
+      return consumer;
+    } catch (e) {
+      print('[MQTT ERROR] Failed to subscribe to $queueName: $e');
+      rethrow;
+    }
   }
 
   // Publish a message to a queue
   Future<void> publish(String queueName, String message) async {
-    if (_channel == null) throw Exception('Not connected');
-    Queue queue = await _channel!.queue(queueName);
-    queue.publish(message);
+    if (_channel == null) {
+      throw Exception(
+        'Cannot publish to $queueName: Not connected to MQTT broker',
+      );
+    }
+
+    try {
+      Queue queue = await _channel!.queue(queueName);
+      queue.publish(message);
+    } catch (e) {
+      print('[MQTT ERROR] Failed to publish to $queueName: $e');
+      rethrow;
+    }
   }
 }
