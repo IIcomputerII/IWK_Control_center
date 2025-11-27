@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class WeatherMonitoringCard extends StatelessWidget {
+class Envcard extends StatelessWidget {
   // Example dummy data (replace with real data variables)
   final String date;
   final String clock;
@@ -8,7 +8,7 @@ class WeatherMonitoringCard extends StatelessWidget {
   final String temperature; // Temperature value
   final String deviceId ;
 
-  const WeatherMonitoringCard({
+  const Envcard({
     super.key,
     required this.date,
     required this.clock,

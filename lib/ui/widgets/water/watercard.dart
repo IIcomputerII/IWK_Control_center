@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class MonitoringCard extends StatelessWidget {
+class Watercard extends StatelessWidget {
   final String date;
   final String clock;
   final String statusPompa;
@@ -8,7 +8,8 @@ class MonitoringCard extends StatelessWidget {
   final String kelembaban;
   final String deviceId;
 
-  const MonitoringCard({
+  const Watercard
+  ({
     super.key,
     required this.date,
     required this.clock,

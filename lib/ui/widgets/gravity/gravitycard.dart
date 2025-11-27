@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 
-class WeightMonitoringCard extends StatelessWidget {
+class Gravitycard extends StatelessWidget {
   final String date;
   final String clock;
   final String weight;
   final String deviceId;
 
-  const WeightMonitoringCard({
+  const Gravitycard({
     super.key, 
     required this.date,
     required this.clock,
