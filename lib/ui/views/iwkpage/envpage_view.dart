@@ -31,36 +31,51 @@ class EnvPageView extends StackedView<EnvPageViewModel> {
         ),
         backgroundColor: Colors.orange.shade700,
       ),
-      body: ListView.builder(
-        padding: const EdgeInsets.all(8),
-        itemCount: viewModel.logs.length,
-        itemBuilder: (context, index) {
-          // NEW: Using Envcard widget instead of inline builder
-          final logData = viewModel.logs[index];
-          final sensorData = _parseSensorData(logData);
-          final timestamp = _extractTimestamp(logData);
-
-          // Extract date and time from timestamp
-          final parts = timestamp.split(' ');
-          final date = parts.length >= 3
-              ? '${parts[0]} ${parts[1]} ${parts[2]}'
-              : '';
-          final clock = parts.length >= 4 ? parts.sublist(3).join(' ') : '';
-
-          return Envcard(
-            date: date.isNotEmpty
-                ? date
-                : DateTime.now().toString().split(' ')[0],
-            clock: clock.isNotEmpty
-                ? clock
-                : DateTime.now().toString().split(' ')[1].split('.')[0],
-            cuaca: 'Cloudy', // TODO: Parse from sensor data if available
-            temperature: sensorData['tempC'] ?? '0',
-            deviceId: guid ?? 'N/A',
-          );
-          // OLD: return _buildEnvCard(viewModel.logs[index], guid);
-        },
-      ),
+      body: viewModel.dataList.isNotEmpty
+          ? ListView.builder(
+              padding: const EdgeInsets.all(8),
+              itemCount: viewModel.dataList.length,
+              itemBuilder: (context, index) {
+                final data = viewModel.dataList[index];
+                return Envcard(
+                  date: data.date,
+                  clock: data.clock,
+                  cuaca: data.cuaca,
+                  temperature: data.temperature,
+                  deviceId: data.deviceId,
+                );
+              },
+            )
+          : Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.thermostat_outlined,
+                    size: 80,
+                    color: Colors.grey.shade400,
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    'Waiting for data from device...',
+                    style: TextStyle(fontSize: 16, color: Colors.grey.shade600),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'GUID: ${guid ?? "N/A"}',
+                    style: TextStyle(fontSize: 12, color: Colors.grey.shade500),
+                  ),
+                  if (topic != null)
+                    Text(
+                      'Topic: $topic',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.grey.shade500,
+                      ),
+                    ),
+                ],
+              ),
+            ),
       floatingActionButton: Column(
         mainAxisSize: MainAxisSize.min,
         children: [

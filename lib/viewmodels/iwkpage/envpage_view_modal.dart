@@ -15,6 +15,10 @@ class EnvPageViewModel extends BaseViewModel {
   EnvData? _currentData;
   EnvData? get currentData => _currentData;
 
+  // List of parsed data for history view
+  final List<EnvData> _dataList = [];
+  List<EnvData> get dataList => _dataList;
+
   // Log Feed
   final List<String> _logs = [];
   List<String> get logs => _logs;
@@ -42,43 +46,41 @@ class EnvPageViewModel extends BaseViewModel {
     }
 
     _deviceGuid = guid;
+    // Use the topic exactly as entered by user
     final String safeTopic = topic?.isNotEmpty == true ? topic! : 'environment';
+
+    debugPrint('[ENV] Init with GUID: $_deviceGuid, Topic: $safeTopic');
 
     _isBrokerConnected = true;
     notifyListeners();
 
     try {
-      // Subscribe to sensor queue
-      final sensorTopic = '$safeTopic.sensor';
-      _sensorConsumer = await _brokerService.subscribe(sensorTopic);
+      // Subscribe directly to the topic (no .sensor suffix)
+      debugPrint('[ENV] Subscribing to: $safeTopic');
+      _sensorConsumer = await _brokerService.subscribe(safeTopic);
 
       _sensorConsumer!.listen((AmqpMessage message) {
         final payload = message.payloadAsString;
+        debugPrint('[ENV] Received payload: $payload');
 
         // Parse and filter data by GUID
         final envData = EnvData.tryParse(payload, _deviceGuid);
 
         if (envData != null) {
+          debugPrint('[ENV] Parsed data successfully: ${envData.temperature}');
+
+          // Add to list (newest first)
+          _dataList.insert(0, envData);
+          // Keep list size manageable
+          if (_dataList.length > 50) _dataList.removeLast();
+
           _currentData = envData;
           _lastUpdate = DateTime.now();
           _isDeviceOnline = true;
           notifyListeners();
+        } else {
+          debugPrint('[ENV] Failed to parse data');
         }
-      });
-
-      // Subscribe to log queue
-      final logTopic = '$safeTopic.log';
-      _logConsumer = await _brokerService.subscribe(logTopic);
-
-      _logConsumer!.listen((AmqpMessage message) {
-        final payload = message.payloadAsString;
-
-        _logs.insert(
-          0,
-          '[${DateTime.now().toString().split(' ')[1].split('.')[0]}] $payload',
-        );
-        if (_logs.length > 50) _logs.removeLast();
-        notifyListeners();
       });
     } catch (e) {
       debugPrint('[ENV ERROR] $e');

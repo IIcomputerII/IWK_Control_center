@@ -11,9 +11,13 @@ class WaterPageViewModel extends BaseViewModel {
   // Current device GUID for filtering
   String? _deviceGuid;
 
-  // Latest parsed data
+  // Latest parsed data (kept for compatibility if needed, but we use list mainly)
   WaterData? _currentData;
   WaterData? get currentData => _currentData;
+
+  // List of parsed data for history view
+  final List<WaterData> _dataList = [];
+  List<WaterData> get dataList => _dataList;
 
   // Log Feed
   final List<String> _logs = [];
@@ -42,45 +46,45 @@ class WaterPageViewModel extends BaseViewModel {
     }
 
     _deviceGuid = guid;
+    // Use the topic exactly as entered by user, or default to 'smart_watering'
     final String safeTopic = topic?.isNotEmpty == true
         ? topic!
         : 'smart_watering';
+
+    debugPrint('[WATER] Init with GUID: $_deviceGuid, Topic: $safeTopic');
 
     _isBrokerConnected = true;
     notifyListeners();
 
     try {
-      // Subscribe to sensor queue
-      final sensorTopic = '$safeTopic.sensor';
-      _sensorConsumer = await _brokerService.subscribe(sensorTopic);
+      // Subscribe directly to the topic (no .sensor suffix)
+      debugPrint('[WATER] Subscribing to: $safeTopic');
+      _sensorConsumer = await _brokerService.subscribe(safeTopic);
 
       _sensorConsumer!.listen((AmqpMessage message) {
         final payload = message.payloadAsString;
+        debugPrint('[WATER] Received payload: $payload');
 
         // Parse and filter data by GUID
         final waterData = WaterData.tryParse(payload, _deviceGuid);
 
         if (waterData != null) {
+          debugPrint(
+            '[WATER] Parsed data successfully: ${waterData.kelembaban}',
+          );
+
+          // Add to list (newest first)
+          _dataList.insert(0, waterData);
+          // Keep list size manageable
+          if (_dataList.length > 50) _dataList.removeLast();
+
           _currentData = waterData;
           _lastUpdate = DateTime.now();
           _isDeviceOnline = true;
           notifyListeners();
+        } else {
+          debugPrint('[WATER] Failed to parse data');
         }
-      });
-
-      // Subscribe to log queue
-      final logTopic = '$safeTopic.log';
-      _logConsumer = await _brokerService.subscribe(logTopic);
-
-      _logConsumer!.listen((AmqpMessage message) {
-        final payload = message.payloadAsString;
-
-        _logs.insert(
-          0,
-          '[${DateTime.now().toString().split(' ')[1].split('.')[0]}] $payload',
-        );
-        if (_logs.length > 50) _logs.removeLast();
-        notifyListeners();
       });
     } catch (e) {
       debugPrint('[WATER ERROR] $e');

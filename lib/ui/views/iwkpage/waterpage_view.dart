@@ -31,17 +31,21 @@ class WaterPageView extends StackedView<WaterPageViewModel> {
         ),
         backgroundColor: Colors.green.shade700,
       ),
-      body: viewModel.currentData != null
-          ? SingleChildScrollView(
+      body: viewModel.dataList.isNotEmpty
+          ? ListView.builder(
               padding: const EdgeInsets.symmetric(vertical: 16),
-              child: Watercard(
-                date: viewModel.currentData!.date,
-                clock: viewModel.currentData!.clock,
-                statusPompa: viewModel.currentData!.statusPompa,
-                statusSoil: viewModel.currentData!.statusSoil,
-                kelembaban: viewModel.currentData!.kelembaban,
-                deviceId: viewModel.currentData!.deviceId,
-              ),
+              itemCount: viewModel.dataList.length,
+              itemBuilder: (context, index) {
+                final data = viewModel.dataList[index];
+                return Watercard(
+                  date: data.date,
+                  clock: data.clock,
+                  statusPompa: data.statusPompa,
+                  statusSoil: data.statusSoil,
+                  kelembaban: data.kelembaban,
+                  deviceId: data.deviceId,
+                );
+              },
             )
           : Center(
               child: Column(
@@ -62,6 +66,14 @@ class WaterPageView extends StackedView<WaterPageViewModel> {
                     'GUID: ${guid ?? "N/A"}',
                     style: TextStyle(fontSize: 12, color: Colors.grey.shade500),
                   ),
+                  if (topic != null)
+                    Text(
+                      'Topic: $topic',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.grey.shade500,
+                      ),
+                    ),
                 ],
               ),
             ),

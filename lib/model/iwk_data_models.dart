@@ -33,19 +33,74 @@ class WaterData {
     );
   }
 
-  static WaterData? tryParse(String jsonString, String? filterGuid) {
+  static WaterData? tryParse(String payload, String? filterGuid) {
     try {
-      final Map<String, dynamic> data = jsonDecode(jsonString);
-      final waterData = WaterData.fromJson(data);
+      // Check if payload is in GUID#Value format (e.g., "guid#752")
+      // Reference: GravityData implementation
+      if (payload.contains('#')) {
+        final parts = payload.split('#');
+        if (parts.length >= 2) {
+          final guid = parts[0].trim();
+          final value = parts[1].trim();
 
-      // Filter by GUID if provided
-      if (filterGuid != null && filterGuid.isNotEmpty) {
-        if (waterData.guid != filterGuid) {
-          return null; // Not matching GUID
+          // Filter by GUID if provided
+          if (filterGuid != null && filterGuid.isNotEmpty) {
+            if (guid != filterGuid) {
+              return null;
+            }
+          }
+
+          // Create WaterData with current timestamp
+          final now = DateTime.now();
+
+          // Logic for status based on value
+          // Value > 700 means Dry (Kering) -> Pump ON
+          // Value <= 700 means Wet (Basah) -> Pump OFF
+          String statusSoil = 'Unknown';
+          String statusPompa = 'OFF';
+
+          try {
+            final intVal = int.parse(value);
+            if (intVal > 700) {
+              statusSoil = 'Kering';
+              statusPompa = 'ON';
+            } else {
+              statusSoil = 'Basah';
+              statusPompa = 'OFF';
+            }
+          } catch (e) {
+            debugPrint('[WaterData] Error parsing value to int: $e');
+          }
+
+          return WaterData(
+            date: '${now.day}/${now.month}/${now.year}',
+            clock:
+                '${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}:${now.second.toString().padLeft(2, '0')}',
+            statusPompa: statusPompa,
+            statusSoil: statusSoil,
+            kelembaban: '$value RH',
+            deviceId: guid.length >= 8 ? guid.substring(0, 8) : guid,
+            guid: guid,
+          );
         }
       }
 
-      return waterData;
+      // Fallback: Try JSON parsing
+      if (payload.trim().startsWith('{')) {
+        final Map<String, dynamic> data = jsonDecode(payload);
+        final waterData = WaterData.fromJson(data);
+
+        // Filter by GUID if provided
+        if (filterGuid != null && filterGuid.isNotEmpty) {
+          if (waterData.guid != filterGuid) {
+            return null; // Not matching GUID
+          }
+        }
+
+        return waterData;
+      }
+
+      return null;
     } catch (e) {
       debugPrint('[WaterData] Parse error: $e');
       return null;
@@ -82,19 +137,68 @@ class EnvData {
     );
   }
 
-  static EnvData? tryParse(String jsonString, String? filterGuid) {
+  static EnvData? tryParse(String payload, String? filterGuid) {
     try {
-      final Map<String, dynamic> data = jsonDecode(jsonString);
-      final envData = EnvData.fromJson(data);
+      // Check if payload is in GUID#Value format (e.g., "guid#26.20")
+      if (payload.contains('#')) {
+        final parts = payload.split('#');
+        if (parts.length >= 2) {
+          final guid = parts[0].trim();
+          final temperature = parts[1].trim();
 
-      // Filter by GUID if provided
-      if (filterGuid != null && filterGuid.isNotEmpty) {
-        if (envData.guid != filterGuid) {
-          return null; // Not matching GUID
+          // Filter by GUID if provided
+          if (filterGuid != null && filterGuid.isNotEmpty) {
+            if (guid != filterGuid) {
+              return null;
+            }
+          }
+
+          // Create EnvData with current timestamp
+          final now = DateTime.now();
+
+          // Determine weather status based on temperature
+          String cuaca = 'Cloudy';
+          try {
+            final temp = double.parse(temperature);
+            if (temp > 30) {
+              cuaca = 'Hot';
+            } else if (temp < 20) {
+              cuaca = 'Cold';
+            } else {
+              cuaca = 'Normal';
+            }
+          } catch (e) {
+            debugPrint('[EnvData] Error parsing temperature: $e');
+          }
+
+          return EnvData(
+            date: '${now.day}/${now.month}/${now.year}',
+            clock:
+                '${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}:${now.second.toString().padLeft(2, '0')}',
+            cuaca: cuaca,
+            temperature: '$temperature °C',
+            deviceId: guid.length >= 8 ? guid.substring(0, 8) : guid,
+            guid: guid,
+          );
         }
       }
 
-      return envData;
+      // Fallback: Try JSON parsing
+      if (payload.trim().startsWith('{')) {
+        final Map<String, dynamic> data = jsonDecode(payload);
+        final envData = EnvData.fromJson(data);
+
+        // Filter by GUID if provided
+        if (filterGuid != null && filterGuid.isNotEmpty) {
+          if (envData.guid != filterGuid) {
+            return null; // Not matching GUID
+          }
+        }
+
+        return envData;
+      }
+
+      return null;
     } catch (e) {
       debugPrint('[EnvData] Parse error: $e');
       return null;
