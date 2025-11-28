@@ -29,8 +29,11 @@ class UniqueCredentialView extends StackedView<UniqueCredentialViewModel> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: const Text('Device Credentials'),
+        title: Text('Device Credentials', style: TextStyle(color: Colors.white.withOpacity(0.8)),),
         centerTitle: true,
+        iconTheme: IconThemeData(
+          color: Colors.white.withOpacity(0.8), // <- Overrides the app-wide color for this specific AppBar's icons
+        ),
         backgroundColor: config.primaryColor,
         elevation: 0,
       ),

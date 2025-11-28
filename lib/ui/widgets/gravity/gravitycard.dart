@@ -17,8 +17,8 @@ class Gravitycard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Define the color based on the image (light gray background)
-    const Color cardColor = Color(0xFFE0E0E0); // A light gray
-    const Color textColor = Colors.black;
+    final Color cardColor = Colors.blue.shade100; // A light gray
+    final Color textColor = Colors.blue.shade800; // Dark text for contrast
 
     return Center(
       child: Padding(
@@ -40,7 +40,7 @@ class Gravitycard extends StatelessWidget {
                 Text(
                   '$date | $clock',
                   textAlign: TextAlign.center,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
                     color: textColor,
@@ -54,10 +54,10 @@ class Gravitycard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
                     // Scale Icon
-                    const Icon(
+                    Icon(
                       Icons
                           .balance_outlined, // A suitable Material Icon for a scale/weight
-                      size: 60,
+                      size: 50,
                       color: textColor,
                     ),
                     const SizedBox(width: 15),
@@ -70,8 +70,8 @@ class Gravitycard extends StatelessWidget {
                         // Weight Value
                         Text(
                           weight,
-                          style: const TextStyle(
-                            fontSize: 55, // Large font size for visibility
+                          style: TextStyle(
+                            fontSize: 40, // Large font size for visibility
                             fontWeight: FontWeight.bold,
                             color: textColor,
                             height:
@@ -80,7 +80,7 @@ class Gravitycard extends StatelessWidget {
                         ),
                         const SizedBox(width: 5),
                         // Unit (gram)
-                        const Text(
+                        Text(
                           'gram',
                           style: TextStyle(
                             fontSize: 25, // Smaller font size for unit
@@ -95,12 +95,14 @@ class Gravitycard extends StatelessWidget {
                 const SizedBox(height: 35),
 
                 // 3. Device ID
-                Text(
-                  'Device ID: $deviceId',
-                  textAlign: TextAlign.left,
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: textColor.withOpacity(0.7), // Slightly dimmed
+                Center(
+                  child: Text(
+                    deviceId,
+                    textAlign: TextAlign.left,
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: textColor.withOpacity(0.7), // Slightly dimmed
+                    ),
                   ),
                 ),
               ],

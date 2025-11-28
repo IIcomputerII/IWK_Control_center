@@ -22,8 +22,8 @@ class Watercard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Define the color based on the image (light gray background)
-    const Color cardColor = Color(0xFFE0E0E0); // A light gray
-    const Color textColor = Colors.black;
+    final Color cardColor = Colors.green.shade100; // A light gray
+    final Color textColor = Colors.green.shade800; // Dark text for contrast
 
     return Center(
       child: Padding(
@@ -45,7 +45,7 @@ class Watercard extends StatelessWidget {
                 Text(
                   '$date | $clock',
                   textAlign: TextAlign.center,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
                     color: textColor,
@@ -62,6 +62,7 @@ class Watercard extends StatelessWidget {
                       icon: Icons.water_damage_outlined, // Icon for pump/water
                       title: 'Status Pompa',
                       status: statusPompa,
+                      textColor: textColor
                     ),
 
                     // --- Status Soil Column ---
@@ -69,6 +70,7 @@ class Watercard extends StatelessWidget {
                       icon: Icons.eco_outlined, // Icon for soil/plant
                       title: 'Status Soil',
                       status: statusSoil,
+                      textColor: textColor
                     ),
                   ],
                 ),
@@ -78,7 +80,7 @@ class Watercard extends StatelessWidget {
                 Text(
                   'Kelembaban : $kelembaban RH',
                   textAlign: TextAlign.center,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
                     color: textColor,
@@ -108,8 +110,8 @@ class Watercard extends StatelessWidget {
     required IconData icon,
     required String title,
     required String status,
+    required Color textColor,
   }) {
-    const Color textColor = Colors.black;
     return Column(
       children: <Widget>[
         Icon(
@@ -121,7 +123,7 @@ class Watercard extends StatelessWidget {
         Text(
           title,
           textAlign: TextAlign.center,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 18,
             color: textColor,
           ),
@@ -129,7 +131,7 @@ class Watercard extends StatelessWidget {
         Text(
           status,
           textAlign: TextAlign.center,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.bold,
             color: textColor,

@@ -26,7 +26,10 @@ class HomePageView extends StackedView<HomePageViewModel> {
       appBar: AppBar(
         title: Text(
           viewModel.deviceName,
-          style: const TextStyle(fontWeight: FontWeight.bold),
+          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.blue.shade100),
+        ),
+        iconTheme: IconThemeData(
+          color: Colors.blue.shade100, // <- Overrides the app-wide color for this specific AppBar's icons
         ),
         centerTitle: true,
         backgroundColor: Colors.cyan.shade800,

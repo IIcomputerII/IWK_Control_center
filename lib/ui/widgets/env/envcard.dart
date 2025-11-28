@@ -19,9 +19,8 @@ class Envcard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Define the color based on the image (light gray background)
-    const Color cardColor = Color(0xFFE0E0E0); // A light gray
-    const Color textColor = Colors.black;
+    final Color cardColor = Colors.orange.shade50;
+    final Color textColor = Colors.orange.shade800;
 
     return Center(
       child: Padding(
@@ -43,7 +42,7 @@ class Envcard extends StatelessWidget {
                 Text(
                   '$date | $clock',
                   textAlign: TextAlign.center,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
                     color: textColor,
@@ -60,25 +59,29 @@ class Envcard extends StatelessWidget {
                       icon: Icons.cloud_outlined, // Icon for weather/cloud
                       title: 'Cuaca',
                       status: cuaca,
+                      textColor: textColor
                     ),
 
                     // --- Temperatur (Temperature) Column ---
                     _buildStatusColumn(
                       icon: Icons.thermostat_outlined, // Icon for thermometer
                       title: 'Temperatur',
-                      status: '$temperature °C', // Include the unit
+                      status: temperature, // Include the unit
+                      textColor: textColor
                     ),
                   ],
                 ),
                 const SizedBox(height: 55), // Space for lower section (like Kelembaban in the first card)
 
                 // 3. Device ID
-                Text(
-                  'Device ID: $deviceId',
-                  textAlign: TextAlign.left,
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: textColor.withOpacity(0.7), // Slightly dimmed
+                Center(
+                  child: Text(
+                    deviceId,
+                    textAlign: TextAlign.left,
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: textColor, // Slightly dimmed
+                    ),
                   ),
                 ),
               ],
@@ -94,8 +97,8 @@ class Envcard extends StatelessWidget {
     required IconData icon,
     required String title,
     required String status,
+    required Color textColor,
   }) {
-    const Color textColor = Colors.black;
     return Column(
       children: <Widget>[
         Icon(
@@ -107,7 +110,7 @@ class Envcard extends StatelessWidget {
         Text(
           title,
           textAlign: TextAlign.center,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 18,
             color: textColor,
           ),
@@ -115,7 +118,7 @@ class Envcard extends StatelessWidget {
         Text(
           status,
           textAlign: TextAlign.center,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.bold,
             color: textColor,

@@ -25,9 +25,12 @@ class WaterPageView extends StackedView<WaterPageViewModel> {
     return Scaffold(
       backgroundColor: Colors.green.shade50,
       appBar: AppBar(
-        title: const Text(
+        title: Text(
           'SMART WATERING',
-          style: TextStyle(fontWeight: FontWeight.bold),
+          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.green.shade100),
+        ),
+        iconTheme: IconThemeData(
+          color: Colors.green.shade100, // <- Overrides the app-wide color for this specific AppBar's icons
         ),
         backgroundColor: Colors.green.shade700,
       ),

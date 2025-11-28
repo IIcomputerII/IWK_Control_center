@@ -31,13 +31,15 @@ class SagaPageView extends StackedView<SagaPageViewModel> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: const Text(
+        title: Text(
           'Smartcard Saga',
-          style: TextStyle(fontWeight: FontWeight.bold),
+          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.red.shade100),
+        ),
+        iconTheme: IconThemeData(
+          color: Colors.red.shade100, // <- Overrides the app-wide color for this specific AppBar's icons
         ),
         centerTitle: false,
         backgroundColor: Colors.red,
-        foregroundColor: Colors.black,
         elevation: 0,
       ),
       body: SingleChildScrollView(
@@ -102,14 +104,19 @@ class SagaPageView extends StackedView<SagaPageViewModel> {
 
   // Helper widget to build the profile information field with the label/data stack
   Widget _buildProfileInfoField(String label, String value, bool hasData) {
+    final double labelFontSize = hasData ? 20.0 : 25.0;
     return Padding(
-      padding: const EdgeInsets.only(top: 8.0, bottom: 2.0),
+      padding: const EdgeInsets.only(top: 8.0, bottom: 2.0, left: 4.0, right: 4.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             label,
-            style: const TextStyle(color: Colors.black, fontSize: 16),
+            style: TextStyle(
+              color: Colors.red,
+              fontSize: labelFontSize, // Dynamic font size applied here
+              fontWeight: FontWeight.bold, // Keep labels bold
+            ),
           ),
           // Show the data field only if data is available
           if (hasData) ...[
@@ -124,7 +131,7 @@ class SagaPageView extends StackedView<SagaPageViewModel> {
             ),
           ],
 
-          const SizedBox(height: 8),
+          const SizedBox(height: 16),
           const Divider(color: Colors.black, thickness: 0.5, height: 1),
         ],
       ),

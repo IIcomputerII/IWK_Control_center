@@ -25,16 +25,17 @@ class GravityView extends StackedView<GravityViewModel> {
     return Scaffold(
       backgroundColor: Colors.blue.shade50,
       appBar: AppBar(
-        title: const Text(
+        title: Text(
           'Center of Gravity',
-          style: TextStyle(fontWeight: FontWeight.bold),
+          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.blue.shade100),
+        ),
+        iconTheme: IconThemeData(
+          color: Colors.blue.shade100, // <- Overrides the app-wide color for this specific AppBar's icons
         ),
         backgroundColor: Colors.blue.shade800,
       ),
       body: Column(
         children: [
-          // Empty header space
-          Container(height: 60, color: Colors.grey.shade300),
           Expanded(
             child: ListView.builder(
               padding: const EdgeInsets.all(12),

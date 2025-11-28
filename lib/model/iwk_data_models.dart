@@ -177,7 +177,7 @@ class EnvData {
                 '${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}:${now.second.toString().padLeft(2, '0')}',
             cuaca: cuaca,
             temperature: '$temperature °C',
-            deviceId: guid.length >= 8 ? guid.substring(0, 8) : guid,
+            deviceId: guid,
             guid: guid,
           );
         }
@@ -255,7 +255,7 @@ class GravityData {
             clock:
                 '${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}:${now.second.toString().padLeft(2, '0')}',
             weight: weight,
-            deviceId: guid.length >= 8 ? guid.substring(0, 8) : guid,
+            deviceId: guid,
             guid: guid,
           );
         }

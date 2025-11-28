@@ -25,9 +25,12 @@ class EnvPageView extends StackedView<EnvPageViewModel> {
     return Scaffold(
       backgroundColor: Colors.orange.shade100,
       appBar: AppBar(
-        title: const Text(
+        title: Text(
           'ENVIROMENTAL SENSOR',
-          style: TextStyle(fontWeight: FontWeight.bold),
+          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.orange.shade100 ),
+        ),
+        iconTheme: IconThemeData(
+          color: Colors.orange.shade100, // <- Overrides the app-wide color for this specific AppBar's icons
         ),
         backgroundColor: Colors.orange.shade700,
       ),
