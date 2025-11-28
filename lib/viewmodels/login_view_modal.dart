@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
@@ -27,55 +28,72 @@ class LoginViewModel extends BaseViewModel {
   String? errorMessage;
   bool _isAutoLoginAttempted = false;
 
-  // Check for saved credentials and auto-login
+  String _status = 'idle';
+  String get status => _status;
+
+  // Load saved credentials (populate only, NO auto-login)
+  // User can freely change broker settings before clicking login
   Future<void> init() async {
     if (_isAutoLoginAttempted) return;
     _isAutoLoginAttempted = true;
 
     final credentials = await _storageService.loadCredentials();
     if (credentials != null) {
-      // Populate controllers
+      // Populate controllers - user can modify before login
       userController.text = credentials['user']!;
       passwordController.text = credentials['password']!;
       hostController.text = credentials['host']!;
       vhostController.text = credentials['vhost']!;
 
-      // Auto-login
-      await login(autoLogin: true);
+      debugPrint('[LOGIN] 📋 Loaded saved credentials (no auto-login)');
+    } else {
+      debugPrint('[LOGIN] 📋 No saved credentials found');
     }
   }
 
-  Future<void> login({bool autoLogin = false}) async {
+  // Login with current broker settings (no validation)
+  Future<void> login() async {
     setBusy(true);
     errorMessage = null;
+    _status = 'connecting';
     notifyListeners();
 
     try {
+      debugPrint('[LOGIN] 📡 Connecting to MQTT broker...');
+      debugPrint('[LOGIN] Host: ${hostController.text}');
+      debugPrint('[LOGIN] VHost: ${vhostController.text}');
+      debugPrint('[LOGIN] User: ${userController.text}');
+
       await _brokerService.connect(
         host: hostController.text,
         user: userController.text,
         password: passwordController.text,
         vhost: vhostController.text,
       );
+      debugPrint('[LOGIN] ✅ MQTT Connection successful!');
 
       // Save credentials on successful login
+      debugPrint('[LOGIN] 💾 Saving credentials...');
       await _storageService.saveCredentials(
         user: userController.text,
         password: passwordController.text,
         host: hostController.text,
         vhost: vhostController.text,
       );
+      debugPrint('[LOGIN] ✅ Credentials saved');
 
-      // Navigate to List Modul (Dashboard) on success
+      // Navigate to Dashboard
+      debugPrint('[LOGIN] 🚀 Navigating to Dashboard...');
       await _navigationService.replaceWith(Routes.dashboardView);
+      debugPrint('[LOGIN] ✅ Navigation complete');
+
+      _status = 'connected';
     } catch (e) {
-      errorMessage = e.toString();
+      debugPrint('[LOGIN] ❌ ERROR: $e');
+      errorMessage =
+          'Connection failed: ${e.toString()}\n\nPlease check your broker settings.';
 
-      // If auto-login fails, clear saved credentials
-      if (autoLogin) {
-        await _storageService.clearCredentials();
-      }
-
+      _status = 'error';
       notifyListeners();
     } finally {
       setBusy(false);

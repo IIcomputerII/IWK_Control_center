@@ -179,3 +179,118 @@ class GravityData {
     }
   }
 }
+
+// Home Automation Module Data Model
+// Format: GUID#Voltage#Current#Power#Energy#Frequency#PF
+class HomeData {
+  final String date;
+  final String clock;
+  final String voltage;
+  final String current;
+  final String power;
+  final String energy;
+  final String frequency;
+  final String powerFactor;
+  final String statusSaklar;
+  final String statusSteker;
+  final String deviceId;
+  final String guid;
+
+  HomeData({
+    required this.date,
+    required this.clock,
+    required this.voltage,
+    required this.current,
+    required this.power,
+    required this.energy,
+    required this.frequency,
+    required this.powerFactor,
+    required this.statusSaklar,
+    required this.statusSteker,
+    required this.deviceId,
+    required this.guid,
+  });
+
+  factory HomeData.fromHashString(String hashString) {
+    final parts = hashString.split('#');
+    if (parts.length < 7) {
+      throw FormatException(
+        'Invalid format. Expected: GUID#V#C#P#E#F#PF, got: $hashString',
+      );
+    }
+
+    String cleanValue(String val) {
+      final trimmed = val.trim();
+      if (trimmed.toLowerCase() == 'nan') return '0.00';
+      return trimmed;
+    }
+
+    final now = DateTime.now();
+    return HomeData(
+      date: '${now.day}/${now.month}/${now.year}',
+      clock: '${now.hour}:${now.minute}:${now.second}',
+      guid: parts[0].trim(),
+      voltage: cleanValue(parts[1]),
+      current: cleanValue(parts[2]),
+      power: cleanValue(parts[3]),
+      energy: cleanValue(parts[4]),
+      frequency: cleanValue(parts[5]),
+      powerFactor: parts.length > 6 ? cleanValue(parts[6]) : '0.00',
+      statusSaklar: '0',
+      statusSteker: '0',
+      deviceId: parts[0].trim(),
+    );
+  }
+
+  static Map<String, String> parseControlStatus(String controlString) {
+    final parts = controlString.split('#');
+    if (parts.length < 2) {
+      return {'saklar': '1', 'steker': '1'};
+    }
+
+    final status = parts[1].trim();
+    return {
+      'guid': parts[0].trim(),
+      'saklar': status.length > 0 ? status[0] : '1',
+      'steker': status.length > 1 ? status[1] : '1',
+    };
+  }
+
+  static HomeData? tryParse(String payload, String? filterGuid) {
+    try {
+      if (payload.contains('#') && payload.split('#').length == 2) {
+        return null; // Control status handled separately
+      }
+
+      final homeData = HomeData.fromHashString(payload);
+
+      if (filterGuid != null && filterGuid.isNotEmpty) {
+        if (homeData.guid != filterGuid) {
+          return null;
+        }
+      }
+
+      return homeData;
+    } catch (e) {
+      debugPrint('[HomeData] Parse error: $e');
+      return null;
+    }
+  }
+
+  HomeData copyWith({String? statusSaklar, String? statusSteker}) {
+    return HomeData(
+      date: date,
+      clock: clock,
+      voltage: voltage,
+      current: current,
+      power: power,
+      energy: energy,
+      frequency: frequency,
+      powerFactor: powerFactor,
+      statusSaklar: statusSaklar ?? this.statusSaklar,
+      statusSteker: statusSteker ?? this.statusSteker,
+      deviceId: deviceId,
+      guid: guid,
+    );
+  }
+}

@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:dart_amqp/dart_amqp.dart';
+import 'package:flutter/foundation.dart';
 import 'package:stacked/stacked.dart';
 
 class MQTTService with ListenableServiceMixin {
@@ -38,6 +39,15 @@ class MQTTService with ListenableServiceMixin {
 
     try {
       _client = Client(settings: _lastSettings!);
+
+      // Listen for connection errors to prevent crash
+      _client!.errorListener((Object error) {
+        debugPrint('[MQTT ERROR] Connection error: $error');
+        _status = 'error: $error';
+        notifyListeners();
+        _scheduleReconnect();
+      });
+
       _channel = await _client!.channel();
 
       _status = 'connected';
@@ -48,7 +58,8 @@ class MQTTService with ListenableServiceMixin {
       _status = 'error: $e';
       notifyListeners();
       _scheduleReconnect();
-      rethrow;
+      // Don't rethrow, just handle it
+      debugPrint('[MQTT ERROR] Initial connection failed: $e');
     }
   }
 
@@ -78,7 +89,9 @@ class MQTTService with ListenableServiceMixin {
   }
 
   // Subscribe to queue and bind to MQTT exchange
-  Future<Consumer> subscribe(String queueName) async {
+  // durable: true for persistent queues (commands, important data)
+  // durable: false for ephemeral queues (event streams, logs)
+  Future<Consumer> subscribe(String queueName, {bool durable = true}) async {
     if (_channel == null) {
       throw Exception(
         'Cannot subscribe to $queueName: Not connected to MQTT broker',
@@ -86,11 +99,11 @@ class MQTTService with ListenableServiceMixin {
     }
 
     try {
-      // Declare queue
+      // Declare queue with configurable durability
       Queue queue = await _channel!.queue(
         queueName,
         passive: false,
-        durable: false,
+        durable: durable,
       );
 
       // Convert topic name for AMQP routing: "topic/name" → "topic.name"
@@ -107,13 +120,18 @@ class MQTTService with ListenableServiceMixin {
       Consumer consumer = await queue.consume();
       return consumer;
     } catch (e) {
-      print('[MQTT ERROR] Failed to subscribe to $queueName: $e');
+      debugPrint('[MQTT ERROR] Failed to subscribe to $queueName: $e');
       rethrow;
     }
   }
 
   // Publish a message to a queue
-  Future<void> publish(String queueName, String message) async {
+  // durable should match the queue's durability setting
+  Future<void> publish(
+    String queueName,
+    String message, {
+    bool durable = true,
+  }) async {
     if (_channel == null) {
       throw Exception(
         'Cannot publish to $queueName: Not connected to MQTT broker',
@@ -121,10 +139,10 @@ class MQTTService with ListenableServiceMixin {
     }
 
     try {
-      Queue queue = await _channel!.queue(queueName);
+      Queue queue = await _channel!.queue(queueName, durable: durable);
       queue.publish(message);
     } catch (e) {
-      print('[MQTT ERROR] Failed to publish to $queueName: $e');
+      debugPrint('[MQTT ERROR] Failed to publish to $queueName: $e');
       rethrow;
     }
   }

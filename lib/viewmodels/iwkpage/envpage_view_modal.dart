@@ -1,13 +1,19 @@
 import 'package:dart_amqp/dart_amqp.dart';
+import 'package:flutter/foundation.dart';
 import 'package:stacked/stacked.dart';
 import '../../app/app.locator.dart';
 import '../../services/mqtt_sevice.dart';
+import '../../model/iwk_data_models.dart';
 
 class EnvPageViewModel extends BaseViewModel {
   final _brokerService = locator<MQTTService>();
 
-  String _data = 'Waiting for data...';
-  String get data => _data;
+  // Current device GUID for filtering
+  String? _deviceGuid;
+
+  // Latest parsed data
+  EnvData? _currentData;
+  EnvData? get currentData => _currentData;
 
   // Log Feed
   final List<String> _logs = [];
@@ -31,12 +37,12 @@ class EnvPageViewModel extends BaseViewModel {
 
   void init(String? guid, String? topic) async {
     if (guid == null) {
-      print('[ENV] Init called with null GUID, skipping subscription');
+      debugPrint('[ENV] Init called with null GUID, skipping subscription');
       return;
     }
 
+    _deviceGuid = guid;
     final String safeTopic = topic?.isNotEmpty == true ? topic! : 'environment';
-    print('[ENV] Initializing with GUID: $guid, Topic: $safeTopic');
 
     _isBrokerConnected = true;
     notifyListeners();
@@ -44,29 +50,28 @@ class EnvPageViewModel extends BaseViewModel {
     try {
       // Subscribe to sensor queue
       final sensorTopic = '$safeTopic.sensor';
-      print('[ENV] Subscribing to sensor topic: $sensorTopic');
       _sensorConsumer = await _brokerService.subscribe(sensorTopic);
-      print('[ENV] Successfully subscribed to: $sensorTopic');
 
       _sensorConsumer!.listen((AmqpMessage message) {
         final payload = message.payloadAsString;
-        print('[ENV] Received SENSOR message: $payload');
 
-        _data = payload;
-        _lastUpdate = DateTime.now();
-        _isDeviceOnline = true;
-        notifyListeners();
+        // Parse and filter data by GUID
+        final envData = EnvData.tryParse(payload, _deviceGuid);
+
+        if (envData != null) {
+          _currentData = envData;
+          _lastUpdate = DateTime.now();
+          _isDeviceOnline = true;
+          notifyListeners();
+        }
       });
 
       // Subscribe to log queue
       final logTopic = '$safeTopic.log';
-      print('[ENV] Subscribing to log topic: $logTopic');
       _logConsumer = await _brokerService.subscribe(logTopic);
-      print('[ENV] Successfully subscribed to: $logTopic');
 
       _logConsumer!.listen((AmqpMessage message) {
         final payload = message.payloadAsString;
-        print('[ENV] Received LOG message: $payload');
 
         _logs.insert(
           0,
@@ -75,12 +80,8 @@ class EnvPageViewModel extends BaseViewModel {
         if (_logs.length > 50) _logs.removeLast();
         notifyListeners();
       });
-
-      print('[ENV] Initialization complete - listening for messages');
     } catch (e) {
-      final errorMsg = 'Error subscribing to Environmental topics: $e';
-      print('[ENV ERROR] $errorMsg');
-      _data = errorMsg;
+      debugPrint('[ENV ERROR] $e');
       _isBrokerConnected = false;
       notifyListeners();
     }
@@ -88,7 +89,6 @@ class EnvPageViewModel extends BaseViewModel {
 
   @override
   void dispose() {
-    print('[ENV] Disposing consumers');
     _sensorConsumer?.cancel();
     _logConsumer?.cancel();
     super.dispose();

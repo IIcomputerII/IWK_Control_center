@@ -7,7 +7,7 @@ class Gravitycard extends StatelessWidget {
   final String deviceId;
 
   const Gravitycard({
-    super.key, 
+    super.key,
     required this.date,
     required this.clock,
     required this.weight,
@@ -36,33 +36,34 @@ class Gravitycard extends StatelessWidget {
               mainAxisSize: MainAxisSize.min, // Wrap content height
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: <Widget>[
-                // 1. Weight Display (Icon and Value)
+                // 1. Date and Clock
+                Text(
+                  '$date | $clock',
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: textColor,
+                  ),
+                ),
+                const SizedBox(height: 25),
+
+                // 2. Weight Display (Icon and Value)
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
-                    Text(
-                      '$date | $clock',
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        color: textColor,
-                      ),
-                    ),
-                    const SizedBox(height: 25),
-                    
                     // Scale Icon
                     const Icon(
-                      Icons.balance_outlined, // A suitable Material Icon for a scale/weight
+                      Icons
+                          .balance_outlined, // A suitable Material Icon for a scale/weight
                       size: 60,
                       color: textColor,
                     ),
                     const SizedBox(width: 15),
 
-                    // Weight Value and Unit (arranged in a Column for alignment)
+                    // Weight Value and Unit (arranged in a Row for alignment)
                     Row(
-                      // Use a Row here to keep 'weight' and 'gram' close
                       crossAxisAlignment: CrossAxisAlignment.baseline,
                       textBaseline: TextBaseline.alphabetic,
                       children: [
@@ -73,11 +74,13 @@ class Gravitycard extends StatelessWidget {
                             fontSize: 55, // Large font size for visibility
                             fontWeight: FontWeight.bold,
                             color: textColor,
-                            height: 1.0, // Adjust height to control vertical space
+                            height:
+                                1.0, // Adjust height to control vertical space
                           ),
                         ),
+                        const SizedBox(width: 5),
                         // Unit (gram)
-                        Text(
+                        const Text(
                           'gram',
                           style: TextStyle(
                             fontSize: 25, // Smaller font size for unit
@@ -91,7 +94,7 @@ class Gravitycard extends StatelessWidget {
                 ),
                 const SizedBox(height: 35),
 
-                // 2. Device ID
+                // 3. Device ID
                 Text(
                   'Device ID: $deviceId',
                   textAlign: TextAlign.left,

@@ -84,11 +84,23 @@ class UniqueCredentialViewModel extends BaseViewModel {
 
     String guid = '';
     String topic = '';
+    String? sensorTopic; // For Home Automation queue topic 1
+    String? logTopic; // For Home Automation queue topic 2
 
     // Untuk Home Automation, ambil dari saklarGuid (semua device share GUID yang sama)
     if (moduleName == 'Home Automation') {
       guid = saklarGuid.text.trim();
-      topic = saklarName.text.trim();
+
+      // Use Queue Topic 1 as primary topic (sensor data)
+      topic = queueTopic1.text.trim();
+      sensorTopic = queueTopic1.text.trim();
+      logTopic = queueTopic2.text.trim();
+
+      // Validate queue topics
+      if (sensorTopic.isEmpty || logTopic.isEmpty) {
+        debugPrint('❌ Queue topics must not be empty');
+        return;
+      }
     } else {
       guid = guidController.text.trim();
       topic = keywordController.text.trim();
@@ -101,6 +113,9 @@ class UniqueCredentialViewModel extends BaseViewModel {
     }
 
     debugPrint('✅ Navigating to $moduleName with GUID: $guid, Topic: $topic');
+    if (moduleName == 'Home Automation') {
+      debugPrint('   Sensor Topic: $sensorTopic, Log Topic: $logTopic');
+    }
 
     // Navigate berdasarkan module type
     switch (moduleName) {
@@ -117,7 +132,10 @@ class UniqueCredentialViewModel extends BaseViewModel {
         _nav.navigateToGravityView(guid: guid, topic: topic);
         break;
       case 'Home Automation':
-        _nav.navigateToHomePageView(guid: guid, topic: topic);
+        // Pass queue topics as metadata in topic parameter
+        // Format: "sensorTopic|logTopic"
+        final combinedTopics = '$sensorTopic|$logTopic';
+        _nav.navigateToHomePageView(guid: guid, topic: combinedTopics);
         break;
       default:
         // Fallback untuk module yang belum ada routing khusus

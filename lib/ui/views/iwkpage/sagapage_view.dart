@@ -1,14 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:stacked/stacked.dart';
-import 'package:stacked_services/stacked_services.dart';
 import '../../../viewmodels/iwkpage/sagapage_view_modal.dart';
-import '../../../app/app.locator.dart';
-import 'dart:convert';
 
 class SagaPageView extends StackedView<SagaPageViewModel> {
   final String? topic;
   final String? guid;
-  const SagaPageView({Key? key, this.topic, this.guid}) : super(key: key);
+  const SagaPageView({super.key, this.topic, this.guid});
 
   @override
   void onViewModelReady(SagaPageViewModel viewModel) {
@@ -32,7 +29,7 @@ class SagaPageView extends StackedView<SagaPageViewModel> {
     final bool hasData = cardData.isNotEmpty;
 
     return Scaffold(
-      backgroundColor:Colors.white,
+      backgroundColor: Colors.white,
       appBar: AppBar(
         title: const Text(
           'Smartcard Saga',
@@ -58,12 +55,12 @@ class SagaPageView extends StackedView<SagaPageViewModel> {
     return Column(
       children: [
         CircleAvatar(
-          radius: 100, // Reduced from 40
+          radius: 100,
           backgroundColor: Colors.white,
           child: Image.asset(
             'assets/saga/RFIDkit.png',
-            width: 200, // Reduced from 70
-            height: 200, // Reduced from 70
+            width: 200,
+            height: 200,
             fit: BoxFit.contain,
           ),
         ),
@@ -71,22 +68,34 @@ class SagaPageView extends StackedView<SagaPageViewModel> {
         // Information Fields
         _buildProfileInfoField(
           'Nama Lengkap',
-          cardData['nama'] ?? 'Waiting...', // Default value when no data
+          cardData['nama'] ?? 'Tidak ada data',
           hasData,
         ),
-        _buildProfileInfoField('MAC', cardData['mac'] ?? 'Waiting...', hasData),
-        _buildProfileInfoField('Jam', cardData['jam'] ?? 'Waiting...', hasData),
+        _buildProfileInfoField(
+          'MAC',
+          cardData['mac'] ?? 'Tidak ada data',
+          hasData,
+        ),
+        _buildProfileInfoField(
+          'Jam',
+          cardData['jam'] ?? 'Tidak ada data',
+          hasData,
+        ),
         _buildProfileInfoField(
           'Tanggal',
-          cardData['tanggal'] ?? 'Waiting...',
+          cardData['tanggal'] ?? 'Tidak ada data',
           hasData,
         ),
         _buildProfileInfoField(
           'Sekolah',
-          cardData['sekolah'] ?? 'Waiting...',
+          cardData['sekolah'] ?? 'Tidak ada data',
           hasData,
         ),
-        _buildProfileInfoField('ID', cardData['id'] ?? 'Waiting...', hasData),
+        _buildProfileInfoField(
+          'ID',
+          cardData['id'] ?? 'Tidak ada data',
+          hasData,
+        ),
       ],
     );
   }
@@ -100,17 +109,14 @@ class SagaPageView extends StackedView<SagaPageViewModel> {
         children: [
           Text(
             label,
-            style: const TextStyle(
-              color: Colors.black,
-              fontSize: 16, // Font size matching label in image
-            ),
+            style: const TextStyle(color: Colors.black, fontSize: 16),
           ),
-          // Show the data field only if data is available (Image 2 state)
+          // Show the data field only if data is available
           if (hasData) ...[
             const SizedBox(height: 4),
             Text(
               value,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 16,
                 color: Colors.black,
                 fontWeight: FontWeight.normal,
@@ -119,48 +125,83 @@ class SagaPageView extends StackedView<SagaPageViewModel> {
           ],
 
           const SizedBox(height: 8),
-          const Divider(
-            color: Colors.black, // Darker divider to match the image
-            thickness: 0.5,
-            height: 1,
-          ),
+          const Divider(color: Colors.black, thickness: 0.5, height: 1),
         ],
       ),
     );
   }
 
-  // The original log parsing function is kept as is.
+  // Parse RFID data from MQTT JSON payload
   Map<String, String> _parseRFIDData(String logData) {
     final result = <String, String>{};
 
-    final macMatch = RegExp(
-      r'mac["\s:]+([a-f0-9:]+)',
-      caseSensitive: false,
-    ).firstMatch(logData.toLowerCase());
-    if (macMatch != null) {
-      result['mac'] = macMatch.group(1) ?? '';
+    try {
+      // Try to parse as JSON
+      final jsonMatch = RegExp(r'\{.*\}').firstMatch(logData);
+      if (jsonMatch != null) {
+        final jsonString = jsonMatch.group(0);
+        if (jsonString != null) {
+          // Manual JSON parsing for common fields
+          final jsonData = jsonString.toLowerCase();
+
+          // Extract MAC address
+          final macMatch = RegExp(r'"mac"[:\s]+"([^"]+)"').firstMatch(jsonData);
+          if (macMatch != null) {
+            result['mac'] = macMatch.group(1)?.toUpperCase() ?? '';
+          }
+
+          // Extract RF ID
+          final rfidMatch = RegExp(
+            r'"rf_id"[:\s]+"([^"]+)"',
+          ).firstMatch(jsonData);
+          if (rfidMatch != null) {
+            result['id'] = rfidMatch.group(1)?.toUpperCase() ?? '';
+          }
+
+          // Extract timestamp/jam
+          final jamMatch = RegExp(r'"jam"[:\s]+"([^"]+)"').firstMatch(jsonData);
+          if (jamMatch != null) {
+            result['jam'] = jamMatch.group(1) ?? '';
+          }
+
+          // Extract date/tanggal
+          final tanggalMatch = RegExp(
+            r'"tanggal"[:\s]+"([^"]+)"',
+          ).firstMatch(jsonData);
+          if (tanggalMatch != null) {
+            result['tanggal'] = tanggalMatch.group(1) ?? '';
+          }
+
+          // Extract nama (name) - real data from MQTT
+          final namaMatch = RegExp(
+            r'"nama"[:\s]+"([^"]+)"',
+          ).firstMatch(jsonData);
+          if (namaMatch != null) {
+            result['nama'] = namaMatch.group(1) ?? '';
+          }
+
+          // Extract sekolah (school) - real data from MQTT
+          final sekolahMatch = RegExp(
+            r'"sekolah"[:\s]+"([^"]+)"',
+          ).firstMatch(jsonData);
+          if (sekolahMatch != null) {
+            result['sekolah'] = sekolahMatch.group(1) ?? '';
+          }
+        }
+      }
+    } catch (e) {
+      debugPrint('[SAGA] Error parsing RFID data: $e');
     }
 
-    final idMatch = RegExp(
-      r'id["\s:]+([a-f0-9]+)',
-      caseSensitive: false,
-    ).firstMatch(logData.toLowerCase());
-    if (idMatch != null) {
-      result['id'] = idMatch.group(1) ?? '';
-    }
-
-    if (logData.contains('[') && logData.contains(']')) {
-      // Basic extraction of time and date
+    // Fallback: extract timestamp from log format [HH:MM:SS]
+    if (!result.containsKey('jam') &&
+        logData.contains('[') &&
+        logData.contains(']')) {
       result['jam'] = logData.substring(
         logData.indexOf('[') + 1,
         logData.indexOf(']'),
       );
-      result['tanggal'] = DateTime.now().toString().split(' ')[0];
     }
-
-    // Placeholder data for demonstration
-    result.putIfAbsent('nama', () => 'Dummy Full Name');
-    result.putIfAbsent('sekolah', () => 'Dummy School');
 
     return result;
   }

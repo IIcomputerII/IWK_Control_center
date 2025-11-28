@@ -42,11 +42,7 @@ class UniqueCredentialView extends StackedView<UniqueCredentialViewModel> {
             Infocard(config: config, width: screenWidth),
             const SizedBox(height: 30),
             if (config.name == 'Home Automation')
-              ..._buildHomeFields(
-                viewModel,
-                hintColor,
-                config,
-              )
+              ..._buildHomeFields(viewModel, hintColor, config)
             else if (config.name == 'Smart Saga')
               ..._buildSmartSagaFields(
                 viewModel,
@@ -140,15 +136,15 @@ class UniqueCredentialView extends StackedView<UniqueCredentialViewModel> {
       // Queue topics
       BorderTextField(
         controller: vm.queueTopic1,
-        icon: Icons.label,
-        labelText: 'Queue Topic 1',
+        icon: Icons.sensors,
+        labelText: 'Queue Topic 1 (Sensor & Control)',
         color: hintColor,
       ),
       const SizedBox(height: 15),
       BorderTextField(
         controller: vm.queueTopic2,
-        icon: Icons.label,
-        labelText: 'Queue Topic 2',
+        icon: Icons.text_snippet,
+        labelText: 'Queue Topic 2 (Log)',
         color: hintColor,
       ),
       const SizedBox(height: 30),

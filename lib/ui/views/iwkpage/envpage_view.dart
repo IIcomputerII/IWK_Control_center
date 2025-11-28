@@ -3,6 +3,7 @@ import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 import '../../../viewmodels/iwkpage/envpage_view_modal.dart';
 import '../../../app/app.locator.dart';
+import '../../widgets/env/envcard.dart'; // NEW: Import Envcard widget
 
 class EnvPageView extends StackedView<EnvPageViewModel> {
   final String? topic;
@@ -34,7 +35,30 @@ class EnvPageView extends StackedView<EnvPageViewModel> {
         padding: const EdgeInsets.all(8),
         itemCount: viewModel.logs.length,
         itemBuilder: (context, index) {
-          return _buildEnvCard(viewModel.logs[index], guid);
+          // NEW: Using Envcard widget instead of inline builder
+          final logData = viewModel.logs[index];
+          final sensorData = _parseSensorData(logData);
+          final timestamp = _extractTimestamp(logData);
+
+          // Extract date and time from timestamp
+          final parts = timestamp.split(' ');
+          final date = parts.length >= 3
+              ? '${parts[0]} ${parts[1]} ${parts[2]}'
+              : '';
+          final clock = parts.length >= 4 ? parts.sublist(3).join(' ') : '';
+
+          return Envcard(
+            date: date.isNotEmpty
+                ? date
+                : DateTime.now().toString().split(' ')[0],
+            clock: clock.isNotEmpty
+                ? clock
+                : DateTime.now().toString().split(' ')[1].split('.')[0],
+            cuaca: 'Cloudy', // TODO: Parse from sensor data if available
+            temperature: sensorData['tempC'] ?? '0',
+            deviceId: guid ?? 'N/A',
+          );
+          // OLD: return _buildEnvCard(viewModel.logs[index], guid);
         },
       ),
       floatingActionButton: Column(
@@ -66,88 +90,51 @@ class EnvPageView extends StackedView<EnvPageViewModel> {
     );
   }
 
-  Widget _buildEnvCard(String logData, String? guid) {
-    final sensorData = _parseSensorData(logData);
-
-    return Card(
-      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
-      color: Colors.orange.shade400,
-      elevation: 2,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0)),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Timestamp
-            Text(
-              _extractTimestamp(logData),
-              style: const TextStyle(fontSize: 12, color: Colors.white70),
-            ),
-            const SizedBox(height: 12),
-            Row(
-              children: [
-                // House + Sensor Icon
-                Icon(
-                  Icons.home,
-                  size: 40,
-                  color: Colors.white.withOpacity(0.8),
-                ),
-                Icon(
-                  Icons.sensors,
-                  size: 30,
-                  color: Colors.white.withOpacity(0.8),
-                ),
-                const SizedBox(width: 16),
-                // Temperature readings
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Text(
-                        '${sensorData['tempC']}°C',
-                        style: const TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
-                      ),
-                      Text(
-                        '${sensorData['tempK']} K',
-                        style: const TextStyle(
-                          fontSize: 16,
-                          color: Colors.white70,
-                        ),
-                      ),
-                      Text(
-                        '${sensorData['tempF']}°F',
-                        style: const TextStyle(
-                          fontSize: 16,
-                          color: Colors.white70,
-                        ),
-                      ),
-                      Text(
-                        '${sensorData['humidity']} RH',
-                        style: const TextStyle(
-                          fontSize: 16,
-                          color: Colors.white70,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 8),
-            Text(
-              guid ?? '',
-              style: const TextStyle(fontSize: 9, color: Colors.white60),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+  // OLD CODE: Commented out - using Envcard widget instead
+  // Widget _buildEnvCard(String logData, String? guid) {
+  //   final sensorData = _parseSensorData(logData);
+  //
+  //   return Card(
+  //     margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+  //     color: Colors.orange.shade400,
+  //     elevation: 2,
+  //     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0)),
+  //     child: Padding(
+  //       padding: const EdgeInsets.all(16),
+  //       child: Column(
+  //         crossAxisAlignment: CrossAxisAlignment.start,
+  //         children: [
+  //           Text(_extractTimestamp(logData), style: const TextStyle(fontSize: 12, color: Colors.white70)),
+  //           const SizedBox(height: 12),
+  //           Row(
+  //             children: [
+  //               Icon(Icons.home, size: 40, color: Colors.white.withOpacity(0.8)),
+  //               Icon(Icons.sensors, size: 30, color: Colors.white.withOpacity(0.8)),
+  //               const SizedBox(width: 16),
+  //               Expanded(
+  //                 child: Column(
+  //                   crossAxisAlignment: CrossAxisAlignment.end,
+  //                   children: [
+  //                     Text('${sensorData['tempC']}°C',
+  //                       style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white)),
+  //                     Text('${sensorData['tempK']} K',
+  //                       style: const TextStyle(fontSize: 16, color: Colors.white70)),
+  //                     Text('${sensorData['tempF']}°F',
+  //                       style: const TextStyle(fontSize: 16, color: Colors.white70)),
+  //                     Text('${sensorData['humidity']} RH',
+  //                       style: const TextStyle(fontSize: 16, color: Colors.white70)),
+  //                   ],
+  //                 ),
+  //               ),
+  //             ],
+  //           ),
+  //           const SizedBox(height: 8),
+  //           Text(guid ?? '', style: const TextStyle(fontSize: 9, color: Colors.white60)),
+  //         ],
+  //       ),
+  //     ),
+  //   );
+  // }
 
   String _extractTimestamp(String logData) {
     if (logData.contains('[') && logData.contains(']')) {

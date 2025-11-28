@@ -24,7 +24,6 @@ class HomePageView extends StackedView<HomePageViewModel> {
     return Scaffold(
       backgroundColor: Colors.cyan.shade700,
       appBar: AppBar(
-        // Use dynamic device name from ViewModel
         title: Text(
           viewModel.deviceName,
           style: const TextStyle(fontWeight: FontWeight.bold),
@@ -36,6 +35,46 @@ class HomePageView extends StackedView<HomePageViewModel> {
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
+            // Connection Status Banner (only show when no data)
+            if (!viewModel.isDeviceOnline)
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(12),
+                margin: const EdgeInsets.only(bottom: 16),
+                decoration: BoxDecoration(
+                  color: Colors.orange.shade100,
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: Colors.orange.shade300),
+                ),
+                child: Row(
+                  children: [
+                    Icon(Icons.info_outline, color: Colors.orange.shade700),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Waiting for sensor data...',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.orange.shade900,
+                            ),
+                          ),
+                          Text(
+                            'GUID: ${viewModel.deviceGuid ?? "N/A"}',
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Colors.orange.shade700,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
             // Power Meter Card
             Card(
               elevation: 4,
@@ -54,11 +93,11 @@ class HomePageView extends StackedView<HomePageViewModel> {
                       ),
                     ),
                     const SizedBox(height: 20),
-                    _buildPowerRow('Voltage', 'V'),
-                    _buildPowerRow('Current', 'A'),
-                    _buildPowerRow('Power', 'W'),
-                    _buildPowerRow('Energy', 'kWh'),
-                    _buildPowerRow('Frequency', 'Hz'),
+                    _buildPowerRow('Voltage', '${viewModel.voltage} V'),
+                    _buildPowerRow('Current', '${viewModel.current} A'),
+                    _buildPowerRow('Power', '${viewModel.power} W'),
+                    _buildPowerRow('Energy', '${viewModel.energy} kWh'),
+                    _buildPowerRow('Frequency', '${viewModel.frequency} Hz'),
                   ],
                 ),
               ),
@@ -118,7 +157,7 @@ class HomePageView extends StackedView<HomePageViewModel> {
     );
   }
 
-  Widget _buildPowerRow(String label, String unit) {
+  Widget _buildPowerRow(String label, String value) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: Row(
@@ -126,8 +165,12 @@ class HomePageView extends StackedView<HomePageViewModel> {
         children: [
           Text(label, style: const TextStyle(fontSize: 16)),
           Text(
-            unit,
-            style: TextStyle(fontSize: 16, color: Colors.grey.shade600),
+            value,
+            style: const TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Colors.black87,
+            ),
           ),
         ],
       ),
@@ -143,32 +186,43 @@ class HomePageView extends StackedView<HomePageViewModel> {
     return Card(
       elevation: 4,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          children: [
-            Text(
-              label,
-              textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 12),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Transform.scale(
-                  scale: 0.8,
-                  child: Switch(
-                    value: isOn,
-                    onChanged: (value) => onToggle(),
-                    activeColor: Colors.cyan,
-                  ),
+      child: InkWell(
+        onTap: onToggle,
+        borderRadius: BorderRadius.circular(12),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            children: [
+              Text(
+                label,
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
                 ),
-                const SizedBox(width: 8),
-                Icon(icon, size: 32, color: isOn ? Colors.cyan : Colors.grey),
-              ],
-            ),
-          ],
+              ),
+              const SizedBox(height: 12),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Transform.scale(
+                    scale: 0.8,
+                    child: IgnorePointer(
+                      // Disable drag/slide interaction on the switch itself
+                      child: Switch(
+                        value: isOn,
+                        onChanged:
+                            (_) {}, // Callback ignored due to IgnorePointer
+                        activeColor: Colors.cyan,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Icon(icon, size: 32, color: isOn ? Colors.cyan : Colors.grey),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

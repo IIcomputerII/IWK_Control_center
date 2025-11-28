@@ -1,13 +1,19 @@
 import 'package:dart_amqp/dart_amqp.dart';
+import 'package:flutter/foundation.dart';
 import 'package:stacked/stacked.dart';
 import '../../app/app.locator.dart';
 import '../../services/mqtt_sevice.dart';
+import '../../model/iwk_data_models.dart';
 
 class GravityViewModel extends BaseViewModel {
   final _brokerService = locator<MQTTService>();
 
-  String _data = 'Waiting for data...';
-  String get data => _data;
+  // Current device GUID for filtering
+  String? _deviceGuid;
+
+  // Latest parsed data
+  GravityData? _currentData;
+  GravityData? get currentData => _currentData;
 
   // Log Feed
   final List<String> _logs = [];
@@ -31,56 +37,50 @@ class GravityViewModel extends BaseViewModel {
 
   void init(String? guid, String? topic) async {
     if (guid == null) {
-      print('[GRAVITY] Init called with null GUID, skipping subscription');
+      debugPrint('[GRAVITY] Init called with null GUID, skipping subscription');
       return;
     }
 
+    _deviceGuid = guid;
     final String safeTopic = topic?.isNotEmpty == true ? topic! : 'cog';
-    print('[GRAVITY] Initializing with GUID: $guid, Topic: $safeTopic');
 
     _isBrokerConnected = true;
     notifyListeners();
 
     try {
-      // Subscribe to sensor queue
-      final sensorTopic = '$safeTopic.sensor';
-      print('[GRAVITY] Subscribing to sensor topic: $sensorTopic');
-      _sensorConsumer = await _brokerService.subscribe(sensorTopic);
-      print('[GRAVITY] Successfully subscribed to: $sensorTopic');
+      // Subscribe directly to the topic (e.g., "Timbangan")
+      // No .sensor or .log suffix to match MQTT broker exactly
+      debugPrint('[GRAVITY] Subscribing to topic: $safeTopic');
+      _sensorConsumer = await _brokerService.subscribe(safeTopic);
 
       _sensorConsumer!.listen((AmqpMessage message) {
         final payload = message.payloadAsString;
-        print('[GRAVITY] Received SENSOR message: $payload');
+        debugPrint('[GRAVITY] Received: $payload');
 
-        _data = payload;
-        _lastUpdate = DateTime.now();
-        _isDeviceOnline = true;
-        notifyListeners();
-      });
-
-      // Subscribe to log queue
-      final logTopic = '$safeTopic.log';
-      print('[GRAVITY] Subscribing to log topic: $logTopic');
-      _logConsumer = await _brokerService.subscribe(logTopic);
-      print('[GRAVITY] Successfully subscribed to: $logTopic');
-
-      _logConsumer!.listen((AmqpMessage message) {
-        final payload = message.payloadAsString;
-        print('[GRAVITY] Received LOG message: $payload');
-
+        // Add to logs for display (this is what the View shows)
         _logs.insert(
           0,
           '[${DateTime.now().toString().split(' ')[1].split('.')[0]}] $payload',
         );
         if (_logs.length > 50) _logs.removeLast();
+
+        // Also parse and filter data by GUID for future use
+        final gravityData = GravityData.tryParse(payload, _deviceGuid);
+        if (gravityData != null) {
+          _currentData = gravityData;
+          _lastUpdate = DateTime.now();
+          _isDeviceOnline = true;
+          debugPrint('[GRAVITY] Parsed weight: ${gravityData.weight}');
+        } else {
+          debugPrint('[GRAVITY] Failed to parse or GUID mismatch');
+        }
+
         notifyListeners();
       });
 
-      print('[GRAVITY] Initialization complete - listening for messages');
+      debugPrint('[GRAVITY] Subscription successful');
     } catch (e) {
-      final errorMsg = 'Error subscribing to Gravity topics: $e';
-      print('[GRAVITY ERROR] $errorMsg');
-      _data = errorMsg;
+      debugPrint('[GRAVITY ERROR] $e');
       _isBrokerConnected = false;
       notifyListeners();
     }
@@ -88,7 +88,6 @@ class GravityViewModel extends BaseViewModel {
 
   @override
   void dispose() {
-    print('[GRAVITY] Disposing consumers');
     _sensorConsumer?.cancel();
     _logConsumer?.cancel();
     super.dispose();

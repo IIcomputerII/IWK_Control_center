@@ -31,7 +31,11 @@ class SagaPageViewModel extends BaseViewModel {
     notifyListeners();
 
     try {
-      _eventConsumer = await _brokerService.subscribe(safeTopic);
+      // SAGA uses non-durable queue for event streams (better performance, real-time only)
+      _eventConsumer = await _brokerService.subscribe(
+        safeTopic,
+        durable: false,
+      );
 
       _eventConsumer!.listen((AmqpMessage message) {
         final payload = message.payloadAsString;
